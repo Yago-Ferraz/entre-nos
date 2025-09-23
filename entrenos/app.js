@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import ForgotPasswordScreen from './app/src/views/esqueciASenha/esqueciASenha';
+import Cadastro from './app/src/views/cadastro'
 
 const Stack = createStackNavigator();
 
@@ -11,7 +12,7 @@ function App() {
       <Stack.Navigator initialRouteName="esqueciSenha">
         <Stack.Screen
           name="esqueciSenha"
-          component={ForgotPasswordScreen}
+          component={Cadastro}
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
