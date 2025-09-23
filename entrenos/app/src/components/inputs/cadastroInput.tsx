@@ -8,6 +8,7 @@ interface CadastroInputProps {
   value: string;
   onChangeText: (text: string) => void;
   showMic?: boolean;
+  secureTextEntry?: boolean; // 👈 novo para senha
 }
 
 const CadastroInput: React.FC<CadastroInputProps> = ({
@@ -15,6 +16,7 @@ const CadastroInput: React.FC<CadastroInputProps> = ({
   value,
   onChangeText,
   showMic = false,
+  secureTextEntry = false, // default false
 }) => {
   return (
     <View style={styles.inputContainer}>
@@ -23,6 +25,7 @@ const CadastroInput: React.FC<CadastroInputProps> = ({
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
+        secureTextEntry={secureTextEntry} // 👈 agora funciona para senha
       />
       {showMic && (
         <TouchableOpacity>
