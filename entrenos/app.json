@@ -40,6 +40,12 @@
         }
       ]
     ],
+    "extra": {
+      "router": {
+        "unstable_allow-symlinks": true
+      }
+    },
+    
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
