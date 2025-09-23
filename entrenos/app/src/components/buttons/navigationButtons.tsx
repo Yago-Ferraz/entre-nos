@@ -21,7 +21,7 @@ const NavigationButtons: React.FC<Props> = ({
         style={[
           styles.button,
           styles.back,
-          disableBack && { opacity: 0.5 }, // desabilita visualmente
+          disableBack && { opacity: 0.5 }, // feedback visual
         ]}
         onPress={onBack}
         disabled={disableBack}
