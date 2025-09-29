@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ROUTES } from "../Routes";
 import ForgotPasswordScreen from "../views/esqueciASenha/esqueciASenha";
-import { ROUTES } from "../../Routes";
 
 const Stack = createNativeStackNavigator();
 

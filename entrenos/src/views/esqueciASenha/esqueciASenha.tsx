@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Alert,
   ActivityIndicator,
+  Alert,
   Image,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import CustomInput from '../../components/customInput/customInput';
 import CustomButton from '../../components/customButton/customButton';
+import CustomInput from '../../components/customInput/customInput';
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
@@ -53,7 +53,7 @@ const ForgotPasswordScreen = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../../../assets/images/logoEntreNos.png')}
+        source={require('../../../assets/images/logoEntreNos.png')}
         style={styles.logo}
       />
       <Text style={styles.title}>Recuperação de Senha</Text>

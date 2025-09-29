@@ -1,10 +1,12 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { useAuth } from "../AuthContext"; // ajuste o caminho real
-import AuthStack from "../navigation/AuthStack";
-import AppStack from "../navigation/AppStack";
+import { useAuth } from "../AuthContext";
+import AuthStack from "./AuthStack";
+import AppStack from "./AppStack";
 
 export default function RootNavigator() {
   const { user } = useAuth();
+  console.log("user no RootNavigator:", user); // deve ser null
 
   return (
     <NavigationContainer>

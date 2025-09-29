@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// defina o tipo do usuário que você vai simular
 type User = { name: string } | null;
 
 interface AuthContextType {
@@ -12,10 +11,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<User>(null); // sempre null no início
 
-  const login = (userData: User) => setUser(userData);
-  const logout = () => setUser(null);
+  const login = (_: User) => {};
+  const logout = () => {};
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
