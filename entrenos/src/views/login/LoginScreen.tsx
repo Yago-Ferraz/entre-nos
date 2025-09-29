@@ -1,47 +1,57 @@
+
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import StepCard from "../../components/cards/stepCard"; // Reutilizado
-import Header from "../../components/header/header"; // Reutilizado
-import CadastroInput from "../../components/inputs/cadastroInput"; // Reutilizado
-import { styles } from "./LoginStyle"; // Importando o novo estilo
+import Header from "../../components/header/header";
+import CadastroInput from "../../components/inputs/cadastroInput";
+import { styles } from "./LoginStyle";
 
-// A imagem foi escolhida do seu array de cadastro, você pode trocar por um logo
-const loginImage = require("../../../assets/images/Rectangle 339.svg");
+const loginImage = require("../../../assets/images/logoEntreNos.png");
 
 const LoginScreen = () => {
-  // 1. Estado simplificado apenas para email e senha
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  // 2. Função única para lidar com o clique no botão de login
   const handleLogin = () => {
-    // Aqui você colocará a lógica para autenticar o usuário
     console.log("Tentativa de login com:", formData);
+  };
+  
+  const handleCreateAccount = () => {
+   
+    console.log("Navegar para a tela de Cadastro");
   };
 
   return (
     <View style={styles.container}>
-      <Header title="Login" />
 
       <View style={styles.content}>
-        <StepCard>
-          <Text style={styles.title}>{"Bem-vindo(a) de volta!"}</Text>
+        <Image source={loginImage} style={styles.image} resizeMode="contain" />
 
-          <Image source={loginImage} style={styles.image} resizeMode="contain" />
-
-          {/* 3. Inputs de E-mail e Senha diretamente na tela */}
-          <View style={{ width: "100%", gap: 16 }}>
+        <View style={styles.formContainer}>
+          
+          
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>E-mail</Text>
             <CadastroInput
-              placeholder="Digite seu e-mail ou usuário"
+              placeholder="Insira seu E-mail"
               value={formData.email}
               onChangeText={(text) =>
                 setFormData({ ...formData, email: text })
               }
             />
+          </View>
+
+         
+          <View style={styles.inputContainer}>
+            <View style={styles.passwordHeader}>
+              <Text style={styles.label}>Senha</Text>
+              <TouchableOpacity>
+                <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
+              </TouchableOpacity>
+            </View>
             <CadastroInput
-              placeholder="Digite sua senha..."
+              placeholder="Insira sua senha"
               value={formData.password}
               onChangeText={(text) =>
                 setFormData({ ...formData, password: text })
@@ -50,18 +60,14 @@ const LoginScreen = () => {
             />
           </View>
           
-          {/* Opcional: Link para "Esqueci a senha" */}
-          <TouchableOpacity style={styles.forgotPasswordButton}>
-            <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
-
-
-          {/* 4. Botão único de "Entrar" no lugar dos botões de navegação */}
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Entrar</Text>
+            <Text style={styles.loginButtonText}>Fazer Login</Text>
           </TouchableOpacity>
-          
-        </StepCard>
+
+          <TouchableOpacity style={styles.createAccountButton} onPress={handleCreateAccount}>
+            <Text style={styles.createAccountText}>Criar conta</Text>
+          </TouchableOpacity>
+        </View> 
       </View>
     </View>
   );
