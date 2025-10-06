@@ -1,5 +1,6 @@
 export const ROUTES = {
-  FORGOT_PASSWORD: "ForgotPassword",
-  SIGN_UP: "SignUp",
+  LOGIN: 'Login', // <-- ADICIONE ESTA LINHA
+  FORGOT_PASSWORD: 'ForgotPassword',
+  SIGN_UP: 'Signup',
 
 } as const;
