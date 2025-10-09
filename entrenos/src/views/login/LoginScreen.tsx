@@ -4,10 +4,13 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import Header from "../../components/header/header";
 import CadastroInput from "../../components/inputs/cadastroInput";
 import { styles } from "./LoginStyle";
-
+import { ROUTES } from '../../Routes';
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 const loginImage = require("../../../assets/images/logoEntreNos.png");
+import { AuthStackParamList } from "../../types/navigationTypes";
 
 const LoginScreen = () => {
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,7 +22,7 @@ const LoginScreen = () => {
   
   const handleCreateAccount = () => {
    
-    console.log("Navegar para a tela de Cadastro");
+    navigation.navigate(ROUTES.SIGN_UP); 
   };
 
   return (

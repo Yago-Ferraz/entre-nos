@@ -4,15 +4,22 @@ import StepCard from "../../components/cards/stepCard";
 import Header from "../../components/header/header";
 import CadastroInput from "../../components/inputs/cadastroInput";
 import { styles } from "./cadastroStyle";
-
+import { useNavigation } from '@react-navigation/native';
 import NavigationButtons from "../../components/buttons/navigationButtons";
+import { AuthStackParamList } from '../../types/navigationTypes';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+type CadastroNavigationProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  'Signup' // a tela onde você está agora (Cadastro básico)
+>;
+
 
 const steps = [
   {
     id: 1,
     title: "Olá Primeiro me\ninforma o que você é?",
 
-    image: require("../../../assets/images/Rectangle 320.svg"),
+    image: require("../../../assets/images/Rectangle 320.png"),
     type: "choice", // 👈 tipo especial
 
   },
@@ -20,14 +27,14 @@ const steps = [
     id: 2,
     title: "Agora, nos\nInforme seu nome:",
     placeholder: "Insira seu nome...",
-    image: require("../../../assets/images/Rectangle 324.svg"),
+    image: require("../../../assets/images/Rectangle 324.png"),
     input: true,
   },
   {
     id: 3,
     title: "Muito bom! nos\ninforme seu telefone:",
     placeholder: "Digite seu telefone...",
-    image: require("../../../assets/images/Rectangle 321.svg"),
+    image: require("../../../assets/images/Rectangle 321.png"),
     input: true,
   },
   {
@@ -35,14 +42,14 @@ const steps = [
     title: "Digite seu CNPJ:",
 
     placeholder: "Digite seu CNPJ...",
-    image: require("../../../assets/images/Rectangle 323.svg"),
+    image: require("../../../assets/images/Rectangle 323.png"),
     input: true,
   },
   {
     id: 5,
     title: "Quase lá!\nDigite sua senha:",
 
-    image: require("../../../assets/images/Rectangle 339.svg"),
+    image: require("../../../assets/images/Rectangle 339.png"),
     type: "password", // 👈 tipo especial
 
   },
@@ -50,12 +57,13 @@ const steps = [
     id: 6,
     title: "Perfeito! Seu cadastro\nfoi realizado!",
 
-    image: require("../../../assets/images/Rectangle 339.svg"),
+    image: require("../../../assets/images/Rectangle 339.png"),
     input: false,
   },
 ];
 
 const Cadastro = () => {
+  const navigation = useNavigation<CadastroNavigationProp>();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     userType: "",
@@ -64,6 +72,7 @@ const Cadastro = () => {
     cnpj: "",
     password: "",
     confirmPassword: "",
+    categoria:''
   });
 
   const step = steps[currentStep];
@@ -73,6 +82,7 @@ const Cadastro = () => {
       setCurrentStep(currentStep + 1);
     } else {
       console.log("Finalizar cadastro:", formData);
+      navigation.navigate('singuploja', { formData });
     }
   };
 
@@ -157,7 +167,7 @@ const Cadastro = () => {
                 : ""
             }
             onChangeText={handleInputChange}
-            showMic={step.id === 2}
+          
         />
         )}
 

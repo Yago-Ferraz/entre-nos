@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center", // centraliza vertical
     alignItems: "center",     // centraliza horizontal
     width: "100%",
+    
     },
   title: {
     fontSize: 20,
