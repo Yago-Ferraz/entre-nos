@@ -7,6 +7,8 @@ export type FormDataCadastroLojaType = {
     password: string,
     confirmPassword: string,
     categoria: string
+    fotos: string[]
+    
 };
 
 export type StepProps = {

@@ -72,7 +72,8 @@ const Cadastro = () => {
     cnpj: "",
     password: "",
     confirmPassword: "",
-    categoria:''
+    categoria:'',
+    fotos: []
   });
 
   const step = steps[currentStep];

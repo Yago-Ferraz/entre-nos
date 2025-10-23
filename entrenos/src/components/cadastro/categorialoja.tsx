@@ -8,6 +8,8 @@ import {
   cinza,
 } from '../../global';
 import { StepProps } from '../../types/cadastro/cadastro';
+import { Dimensions } from 'react-native';
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const categorias = ['Vestuário', 'Alimentação', 'Tecnologia', 'Esportes'];
 
@@ -69,8 +71,7 @@ const styles = StyleSheet.create({
     width:'100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
-    paddingVertical: 20,
+    paddingVertical: screenHeight * 0.01,
   },
   titulo: {
     textAlign: 'center',
@@ -78,14 +79,14 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   ilustracao: {
-    width: '35%',
-    height:'35%',
+    width: '50%',
+    height:'50%',
     resizeMode: 'contain',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   textoPasso: {
     color: cinza,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   botaoContainer: {
     flexDirection: 'row',

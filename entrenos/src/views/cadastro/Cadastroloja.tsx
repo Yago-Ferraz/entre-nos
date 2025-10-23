@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import Header from "../../components/header/header";
 import NavigationButtons from "../../components/buttons/navigationButtons";
-import {Infoloja} from '../../components/cadastro/InfoCadastroLoja'
+import {Infoloja} from '../../components/cadastro/InfoCadastroLoja';
+import {FotosLoja} from '../../components/cadastro/FotosLoja';
 import {CategoriaLoja} from '../../components/cadastro/categorialoja';
 import { FormDataCadastroLojaType } from "../../types/cadastro/cadastro";
 import { useRoute } from '@react-navigation/native';
@@ -28,7 +29,8 @@ const CadastroEmpresa = () => {
 
     const steps = [
     <Infoloja formData={formData} setFormData={setFormData} onNext={handleNext} onDecline={handleBack} />,
-        <CategoriaLoja formData={formData} setFormData={setFormData} onNext={handleNext} onDecline={handleBack}/>
+        <CategoriaLoja formData={formData} setFormData={setFormData} onNext={handleNext} onDecline={handleBack}/>,
+        <FotosLoja formData={formData} setFormData={setFormData} onNext={handleNext} onDecline={handleBack}/>,
   ];
 
   return (

@@ -13,6 +13,7 @@ interface DropdownProps<T> {
   textStyle?: TextStyle;
   dropdownStyle?: ViewStyle;
   width?: string | number;
+  height?: string | number;
   labelExtractor?: (item: T) => string;
 }
 
@@ -26,14 +27,15 @@ function Dropdown<T>({
   textStyle,
   dropdownStyle,
   labelExtractor,
-  width
+  width,
+  height
 }: DropdownProps<T>) {
   const [open, setOpen] = useState(false);
 
   const getLabel = (item: T) => (labelExtractor ? labelExtractor(item) : String(item));
 
   return (
-    <View style={[{  alignItems: 'center', position: 'relative' },{width: width as DimensionValue}]}>
+    <View style={[{  alignItems: 'center', position: 'relative',zIndex:10000 },{width: width as DimensionValue},[{height: height as DimensionValue}]]}>
       <TouchableOpacity
         style={[styles.button, buttonStyle]}
         onPress={() => setOpen(!open)}>
