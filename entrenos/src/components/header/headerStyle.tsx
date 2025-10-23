@@ -1,4 +1,6 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet,Dimensions  } from "react-native";
+import { typography } from "@/src/global";
+const { width, height } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   container: {
@@ -8,10 +10,14 @@ export const styles = StyleSheet.create({
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
     alignItems: "center",
+    height: height*0.12,
+    justifyContent:"center",
   },
   title: {
+    ...typography.h1,
     color: "#fff",
-    fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
+    
   },
 });

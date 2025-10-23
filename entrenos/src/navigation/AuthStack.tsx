@@ -22,8 +22,8 @@ export default function AuthStack() {
       
       {/* As outras telas continuam registradas */}
       <Stack.Screen name={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
-      <Stack.Screen name={ROUTES.SIGN_UP} component={Cadastro} />
-      <Stack.Screen name={ROUTES.SING_UP_LOJA} component={CadastroEmpresa} />
+      <Stack.Screen name={ROUTES.SIGN_UP} component={Cadastro} options={{ headerShown: false }}/>
+      <Stack.Screen name={ROUTES.SING_UP_LOJA} component={CadastroEmpresa} options={{ headerShown: false }} />
 
     </Stack.Navigator>
   );

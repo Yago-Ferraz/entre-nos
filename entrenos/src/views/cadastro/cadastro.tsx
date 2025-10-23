@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View,StyleSheet } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context'; 
 import StepCard from "../../components/cards/stepCard";
 import Header from "../../components/header/header";
+import { cor_primaria } from "@/src/global";
 import CadastroInput from "../../components/inputs/cadastroInput";
 import { styles } from "./cadastroStyle";
 import { useNavigation } from '@react-navigation/native';
@@ -73,7 +75,9 @@ const Cadastro = () => {
     password: "",
     confirmPassword: "",
     categoria:'',
-    fotos: []
+    fotos: [],
+    logo:'',
+    descricao: '',
   });
 
   const step = steps[currentStep];
@@ -101,6 +105,8 @@ const Cadastro = () => {
   };
 
   return (
+    
+
     <View style={styles.container}>
       <Header title="Cadastro" />
 
@@ -212,5 +218,6 @@ const Cadastro = () => {
     </View>
   );
 };
+
 
 export default Cadastro;

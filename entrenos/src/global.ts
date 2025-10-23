@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-
+import { StyleSheet,Dimensions  } from "react-native";
+const { width } = Dimensions.get('window');
 
 export const cor_primaria = '#228932'
 export const cor_secundaria = '#021757'
@@ -18,15 +18,16 @@ export const FONT_FAMILY = {
     JOST_BOLD:'JOST_BOLD',
     JOST_SEMIBOLD:'JOST_SEMIBOLD'
 };
+const scale = width / 400;
 
 // Objeto para padronizar os tamanhos de fonte.
 export const FONT_SIZE = {
-    XS: 12,
-    SM: 14,
-    MD: 16,
-    LG: 20,
-    XL: 24,
-    XXL: 32,
+  XS: 12 * scale,
+  SM: 14 * scale,
+  MD: 16 * scale,
+  LG: 20 * scale,
+  XL: 24 * scale,
+  XXL: 32 * scale,
 };
 
 // Seus estilos de texto padronizados

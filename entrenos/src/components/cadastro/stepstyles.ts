@@ -2,10 +2,11 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-between', 
-    paddingVertical: 20,
-    backgroundColor: '#fff',
+    justifyContent: 'center',
+
+
   },
   title: {
     fontSize: 24,
@@ -15,8 +16,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   illustration: {
-    width: 162,
-    height: 196,
+    height: '40%',
     resizeMode: 'contain',
     marginVertical: 30,
   },

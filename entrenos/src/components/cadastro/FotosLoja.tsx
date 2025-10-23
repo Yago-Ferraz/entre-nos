@@ -35,6 +35,7 @@ export const FotosLoja: React.FC<StepProps> = ({
 
   // Função para abrir a galeria
   const pickImage = async () => {
+    if(formData.fotos.length <6){
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permissão necessária', 'Precisamos da permissão para acessar sua galeria.');
@@ -45,12 +46,16 @@ export const FotosLoja: React.FC<StepProps> = ({
       mediaTypes: 'images', // Correção final para o warning
       allowsMultipleSelection: true,
       quality: 0.8,
-      selectionLimit: 10 - selectedImages.length, // Limite de 10 fotos
+      selectionLimit: 6 - selectedImages.length, // Limite de 10 fotos
     });
 
     if (!result.canceled && result.assets) {
       const newImageUris = result.assets.map(asset => asset.uri);
+      if(formData.fotos.length <6){
+
       setSelectedImages(prevUris => [...prevUris, ...newImageUris]);
+    }}}else{
+      Alert.alert('Limite de fotos', 'Você pode adicionar até 6 fotos.');
     }
   };
 
@@ -113,7 +118,7 @@ export const FotosLoja: React.FC<StepProps> = ({
       )}
 
       <Text style={[typography.detalhes, styles.textoPasso]}>
-        Passo 5 de 7
+        Passo 3 de 6
       </Text>
 
       {/* Botões de navegação, igual ao de CategoriaLoja */}

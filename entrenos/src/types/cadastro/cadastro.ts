@@ -8,6 +8,8 @@ export type FormDataCadastroLojaType = {
     confirmPassword: string,
     categoria: string
     fotos: string[]
+    logo: string
+    descricao: string;
     
 };
 

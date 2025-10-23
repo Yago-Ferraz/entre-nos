@@ -9,9 +9,16 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Este app precisa de acesso ao microfone para transcrever sua fala em texto.",
+        "NSSpeechRecognitionUsageDescription": "Este app precisa de acesso ao reconhecimento de fala para transcrever sua fala em texto."
+      }
     },
     "android": {
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -19,13 +26,15 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.yago_ferraz.entrenos"
     },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@react-native-voice/voice",
       "expo-router",
       [
         "expo-splash-screen",
@@ -43,9 +52,11 @@
     "extra": {
       "router": {
         "unstable_allow-symlinks": true
+      },
+      "eas": {
+        "projectId": "f2696548-f4fb-497e-a581-1bc7de00a087"
       }
     },
-    
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

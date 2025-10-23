@@ -32,11 +32,11 @@ export const CategoriaLoja: React.FC<StepProps> = ({
 
       <Image
         source={require('../../../assets/images/Rectangle 339.png')}
-        style={styles.ilustracao}
+        style={styles.ilustracao} // O estilo corrigido está abaixo
       />
 
       <Text style={[typography.detalhes, styles.textoPasso]}>
-        Passo 2 de 7
+        Passo 2 de 6
       </Text>
 
       <DropdownGeneric<string>
@@ -44,7 +44,7 @@ export const CategoriaLoja: React.FC<StepProps> = ({
         selectedValue={formData.categoria || null}
         onSelect={handleSelectCategoria}
         placeholder="Selecione a categoria"
-        width={'50%'}
+        width={'60%'} // Aumentei um pouco para bater com a imagem
       />
 
       {/* Botões de navegação */}
@@ -76,14 +76,18 @@ const styles = StyleSheet.create({
   titulo: {
     textAlign: 'center',
     marginBottom: 20,
-    maxWidth: '80%',
+    maxWidth: '90%', // Aumentei para permitir mais texto
   },
+  
+  // --- CORREÇÃO AQUI ---
   ilustracao: {
-    width: '50%',
-    height:'50%',
+    width: screenWidth * 0.4, // 40% da largura da tela
+    height: screenWidth * 0.4, // Mesma altura para manter a proporção
     resizeMode: 'contain',
     marginBottom: 20,
   },
+  // --- FIM DA CORREÇÃO ---
+
   textoPasso: {
     color: cinza,
     marginBottom: 20,
@@ -92,7 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: 20,
+    marginTop: 30, // Mais espaço após o dropdown
   },
 });
 
