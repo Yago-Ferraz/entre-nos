@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { View,KeyboardAvoidingView,Platform } from "react-native";
 import Header from "../../components/header/header";
 import NavigationButtons from "../../components/buttons/navigationButtons";
 import {Infoloja} from '../../components/cadastro/InfoCadastroLoja';
@@ -12,6 +12,7 @@ import { FormDataCadastroLojaType } from "../../types/cadastro/cadastro";
 import { useRoute } from '@react-navigation/native';
 import StepCard from '../../components/cards/stepCard'
 import { styles } from "./cadastroStyle";
+import {createUser} from '../../services/userService'
 
 const CadastroEmpresa = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -19,11 +20,23 @@ const CadastroEmpresa = () => {
   const initialFormData = (route.params as { formData: FormDataCadastroLojaType }).formData;
   const [formData, setFormData] = useState<FormDataCadastroLojaType>(initialFormData);
 
+const handleSubmit = async () => {
+  try {
+    // Aqui você envia todo o formData como payload
+    const response = await createUser(formData);
+    console.log('Usuário/Loja criada com sucesso:', response);
+    // Se quiser, navegar para outra tela depois de criar
+    // navigation.navigate('TelaSucesso');
+  } catch (error) {
+    console.error('Erro ao criar usuário/loja:', error);
+  }
+};
 
-
-  const handleNext = () => {
+  const handleNext = async  () => {
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
-    else console.log("Cadastro completo:", formData);
+    else {console.log("Cadastro completo:", formData)
+          handleSubmit();
+    };
   };
 
   const handleBack = () => {
@@ -40,6 +53,11 @@ const CadastroEmpresa = () => {
       ];
 
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // ajuste conforme header
+  >
     <View style={{ flex: 1 }}>
       <Header title="Criar Loja" />
         <View style={styles.content}>
@@ -49,6 +67,7 @@ const CadastroEmpresa = () => {
         </View>
       
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

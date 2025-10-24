@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View,StyleSheet } from "react-native";
+import { Image, Text, TouchableOpacity, View,StyleSheet,KeyboardAvoidingView,Platform } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 import StepCard from "../../components/cards/stepCard";
 import Header from "../../components/header/header";
@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import NavigationButtons from "../../components/buttons/navigationButtons";
 import { AuthStackParamList } from '../../types/navigationTypes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 type CadastroNavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
   'Signup' // a tela onde você está agora (Cadastro básico)
@@ -56,28 +57,39 @@ const steps = [
 
   },
   {
-    id: 6,
+    id: 6, // <-- Novo ID
+    title: "Qual o seu e-mail?",
+    placeholder: "Digite seu e-mail...",
+    // Escolha uma imagem apropriada ou reuse uma
+    image: require("../../../assets/images/Rectangle 323.png"), // Exemplo: Reutilizando imagem
+    input: true,
+  },
+  {
+    id: 7,
     title: "Perfeito! Seu cadastro\nfoi realizado!",
 
     image: require("../../../assets/images/Rectangle 339.png"),
     input: false,
+    
   },
+  
 ];
 
 const Cadastro = () => {
   const navigation = useNavigation<CadastroNavigationProp>();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
-    userType: "",
+    userType: 1,
     name: "",
     phone: "",
     cnpj: "",
     password: "",
     confirmPassword: "",
-    categoria:'',
+    categoria:1,
     fotos: [],
     logo:'',
     descricao: '',
+    email: '', 
   });
 
   const step = steps[currentStep];
@@ -102,11 +114,16 @@ const Cadastro = () => {
     if (step.id === 3) setFormData({ ...formData, phone: text });
     if (step.id === 4) setFormData({ ...formData, cnpj: text });
     if (step.id === 5) setFormData({ ...formData, password: text });
+    if (step.id === 6) setFormData({ ...formData, email: text });
   };
 
   return (
     
-
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // ajuste conforme header
+  >
     <View style={styles.container}>
       <Header title="Cadastro" />
 
@@ -123,14 +140,14 @@ const Cadastro = () => {
             <TouchableOpacity
               style={[
                 styles.choiceButton,
-                formData.userType === "empresa" && styles.choiceButtonSelected,
+                formData.userType === 1 && styles.choiceButtonSelected,
               ]}
-              onPress={() => setFormData({ ...formData, userType: "empresa" })}
+              onPress={() => setFormData({ ...formData, userType: 1 })}
             >
               <Text
                 style={[
                   styles.choiceText,
-                  formData.userType === "empresa" && styles.choiceTextSelected,
+                  formData.userType === 1 && styles.choiceTextSelected,
                 ]}
               >
                 Empresa
@@ -140,17 +157,17 @@ const Cadastro = () => {
             <TouchableOpacity
               style={[
                 styles.choiceButton,
-                formData.userType === "consumidor" &&
+                formData.userType === 2 &&
                   styles.choiceButtonSelected,
               ]}
               onPress={() =>
-                setFormData({ ...formData, userType: "consumidor" })
+                setFormData({ ...formData, userType:2 })
               }
             >
               <Text
                 style={[
                   styles.choiceText,
-                  formData.userType === "consumidor" &&
+                  formData.userType === 2 &&
                     styles.choiceTextSelected,
                 ]}
               >
@@ -171,7 +188,10 @@ const Cadastro = () => {
                 ? formData.phone
                 : step.id === 4
                 ? formData.cnpj
+                :step.id === 6 
+                ? formData.email 
                 : ""
+                
             }
             onChangeText={handleInputChange}
           
@@ -216,6 +236,7 @@ const Cadastro = () => {
         </View>
     
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

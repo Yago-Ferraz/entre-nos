@@ -1,9 +1,10 @@
+// src/components/inputs/Dropdown.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle, DimensionValue } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { cor_primaria, cor_secundaria,typography } from '../../global';
+import { cor_primaria, cor_secundaria, typography } from '../../global';
 
-interface DropdownProps<T> {
+export interface DropdownProps<T> {
   items: T[];
   selectedValue: T | null;
   onSelect: (item: T) => void;
@@ -17,7 +18,7 @@ interface DropdownProps<T> {
   labelExtractor?: (item: T) => string;
 }
 
-function Dropdown<T>({
+const Dropdown = <T,>({ // <-- note o "<T,>" aqui
   items,
   selectedValue,
   onSelect,
@@ -28,18 +29,19 @@ function Dropdown<T>({
   dropdownStyle,
   labelExtractor,
   width,
-  height
-}: DropdownProps<T>) {
+  height,
+}: DropdownProps<T>) => {
   const [open, setOpen] = useState(false);
 
   const getLabel = (item: T) => (labelExtractor ? labelExtractor(item) : String(item));
 
   return (
-    <View style={[{  alignItems: 'center', position: 'relative',zIndex:10000 },{width: width as DimensionValue},[{height: height as DimensionValue}]]}>
+    <View style={[{ alignItems: 'center', position: 'relative', zIndex: 10000 }, { width: width as DimensionValue }, [{ height: height as DimensionValue }]]}>
       <TouchableOpacity
         style={[styles.button, buttonStyle]}
-        onPress={() => setOpen(!open)}>
-        <Text style={[styles.buttonText, textStyle,typography.h4]}>
+        onPress={() => setOpen(!open)}
+      >
+        <Text style={[styles.buttonText, textStyle, typography.h4]}>
           {selectedValue ? getLabel(selectedValue) : placeholder}
         </Text>
         <Icon
@@ -58,8 +60,9 @@ function Dropdown<T>({
               onPress={() => {
                 onSelect(item);
                 setOpen(false);
-              }}>
-              <Text style={[ styles.itemText, textStyle]}>{getLabel(item)}</Text>
+              }}
+            >
+              <Text style={[styles.itemText, textStyle]}>{getLabel(item)}</Text>
               {selectedValue === item && <Icon name="check" size={20} color={cor_primaria} />}
             </TouchableOpacity>
           ))}
@@ -67,7 +70,7 @@ function Dropdown<T>({
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   button: {
@@ -87,10 +90,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    flex:1,
-    textAlign:'center',
-
-
+    flex: 1,
+    textAlign: 'center',
   },
   dropdown: {
     position: 'absolute',

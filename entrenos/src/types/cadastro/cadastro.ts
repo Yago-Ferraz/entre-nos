@@ -1,15 +1,16 @@
 
 export type FormDataCadastroLojaType = {
-    userType: string,
+    userType: number,
     name: string,
     phone: string,
     cnpj: string,
     password: string,
     confirmPassword: string,
-    categoria: string
-    fotos: string[]
-    logo: string
+    categoria: number,
+    fotos: string[],
+    logo: string,
     descricao: string;
+    email: string;
     
 };
 

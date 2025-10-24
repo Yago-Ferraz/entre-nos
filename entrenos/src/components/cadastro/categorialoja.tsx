@@ -1,17 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import Buttongeneric from '../../components/buttons/buttongeneric';
 import DropdownGeneric from '../../components/inputs/Dropdown';
-import {
-  cor_primaria,
-  typography,
-  cinza,
-} from '../../global';
+import { cor_primaria, typography, cinza } from '../../global';
 import { StepProps } from '../../types/cadastro/cadastro';
-import { Dimensions } from 'react-native';
+
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-const categorias = ['Vestuário', 'Alimentação', 'Tecnologia', 'Esportes'];
+const categorias = [
+  { label: 'Vestuário', value: 1 },
+  { label: 'Alimentação', value: 2 },
+  { label: 'Tecnologia', value: 3 },
+  { label: 'Esportes', value: 4 },
+];
 
 export const CategoriaLoja: React.FC<StepProps> = ({
   formData,
@@ -19,11 +20,10 @@ export const CategoriaLoja: React.FC<StepProps> = ({
   onDecline,
   onNext,
 }) => {
-
-  const handleSelectCategoria = (categoria: string) => {
-    setFormData({ ...formData, categoria });
+  const handleSelectCategoria = (categoria: { label: string; value: number }) => {
+    setFormData({ ...formData, categoria: categoria.value });
   };
-
+  const selectedCategoriaObject = categorias.find(cat => cat.value === formData.categoria) || null;
   return (
     <View style={styles.container}>
       <Text style={[typography.h1, styles.titulo]}>
@@ -32,22 +32,23 @@ export const CategoriaLoja: React.FC<StepProps> = ({
 
       <Image
         source={require('../../../assets/images/Rectangle 339.png')}
-        style={styles.ilustracao} // O estilo corrigido está abaixo
+        style={styles.ilustracao}
       />
 
       <Text style={[typography.detalhes, styles.textoPasso]}>
         Passo 2 de 6
       </Text>
 
-      <DropdownGeneric<string>
+     <DropdownGeneric // Use o tipo definido
         items={categorias}
-        selectedValue={formData.categoria || null}
+        selectedValue={selectedCategoriaObject} // Passe o objeto selecionado
         onSelect={handleSelectCategoria}
         placeholder="Selecione a categoria"
-        width={'60%'} // Aumentei um pouco para bater com a imagem
+        width={'60%'} 
+        // 👇 Adicione esta linha para dizer qual propriedade mostrar
+        labelExtractor={(item) => item.label} 
       />
 
-      {/* Botões de navegação */}
       <View style={styles.botaoContainer}>
         <Buttongeneric
           title="Voltar"
@@ -68,7 +69,7 @@ export const CategoriaLoja: React.FC<StepProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width:'100%',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: screenHeight * 0.01,
@@ -76,18 +77,14 @@ const styles = StyleSheet.create({
   titulo: {
     textAlign: 'center',
     marginBottom: 20,
-    maxWidth: '90%', // Aumentei para permitir mais texto
+    maxWidth: '90%',
   },
-  
-  // --- CORREÇÃO AQUI ---
   ilustracao: {
-    width: screenWidth * 0.4, // 40% da largura da tela
-    height: screenWidth * 0.4, // Mesma altura para manter a proporção
+    width: screenWidth * 0.4,
+    height: screenWidth * 0.4,
     resizeMode: 'contain',
     marginBottom: 20,
   },
-  // --- FIM DA CORREÇÃO ---
-
   textoPasso: {
     color: cinza,
     marginBottom: 20,
@@ -96,7 +93,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: 30, // Mais espaço após o dropdown
+    marginTop: 30,
   },
 });
 
