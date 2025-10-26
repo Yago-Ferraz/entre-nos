@@ -13,24 +13,62 @@ import { useRoute } from '@react-navigation/native';
 import StepCard from '../../components/cards/stepCard'
 import { styles } from "./cadastroStyle";
 import {createUser} from '../../services/userService'
+import { createLoja } from '../../services/lojaService';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { ROUTES } from '../../Routes';
+import { AuthStackParamList } from "../../types/navigationTypes";
+import { useAuth } from '../../AuthContext';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CadastroEmpresa = () => {
+  const { user, setUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const route = useRoute();
-  const initialFormData = (route.params as { formData: FormDataCadastroLojaType }).formData;
+const defaultFormData: FormDataCadastroLojaType = {
+  userType: 1,
+  name: '',
+  phone: '',
+  documento: '',
+  password: '',
+  confirmPassword: '',
+  categoria: 1,
+  fotos: [],
+  logo: '',
+  descricao: '',
+  email: '',
+};
+
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
+
+const initialFormData =
+  (route.params as { formData?: FormDataCadastroLojaType })?.formData ||
+  defaultFormData;
   const [formData, setFormData] = useState<FormDataCadastroLojaType>(initialFormData);
 
+  
 const handleSubmit = async () => {
-  try {
-    // Aqui você envia todo o formData como payload
-    const response = await createUser(formData);
-    console.log('Usuário/Loja criada com sucesso:', response);
-    // Se quiser, navegar para outra tela depois de criar
-    // navigation.navigate('TelaSucesso');
-  } catch (error) {
-    console.error('Erro ao criar usuário/loja:', error);
-  }
-};
+    try {
+      if (!user) return;
+
+      const lojaData = {
+        ...formData,
+        categoria: formData.categoria,
+        descricao: formData.descricao,
+        logo: formData.logo,
+        fotos: formData.fotos,
+      };
+
+      const result = await createLoja(lojaData, user.id);
+      console.log('Loja criada com sucesso:', result);
+
+    const updatedUser = { ...user, empresa: result };
+    setUser(updatedUser);
+    await AsyncStorage.setItem("@user", JSON.stringify(updatedUser));
+
+    } catch (error) {
+      console.error('Erro ao criar loja:', error);
+    }
+  };
 
   const handleNext = async  () => {
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);

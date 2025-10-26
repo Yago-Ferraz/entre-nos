@@ -18,7 +18,7 @@ export const FONT_FAMILY = {
     JOST_BOLD:'JOST_BOLD',
     JOST_SEMIBOLD:'JOST_SEMIBOLD'
 };
-const scale = width / 400;
+const scale = width / 440;
 
 // Objeto para padronizar os tamanhos de fonte.
 export const FONT_SIZE = {
@@ -63,4 +63,9 @@ export const typography = StyleSheet.create({
     fontSize: FONT_SIZE.MD,
     fontWeight: '600',
   },
+
+  p:{
+    fontFamily: FONT_FAMILY.JOST_REGULAR,
+    fontSize: FONT_SIZE.SM,
+  }
 });

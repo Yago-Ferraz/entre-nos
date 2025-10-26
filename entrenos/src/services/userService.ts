@@ -1,63 +1,51 @@
 // src/services/userService.ts
-import { API_PUBLIC, API_AUTH } from '../services/api';
-import {FormDataCadastroLojaType} from '../types/cadastro/cadastro'
+import { API_PUBLIC, API_AUTH } from './api';
+import { FormDataCadastroLojaType } from '../types/cadastro/cadastro';
 
-// Criar usuário (registro) - não precisa de token
-export const createUser = async (user: FormDataCadastroLojaType) => {
+// Criar usuário (registro) - apenas dados básicos do usuário
+export const createUser = async (user: {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  userType: number;
+}) => {
   try {
     const formData = new FormData();
-
     formData.append("name", user.name);
     formData.append("email", user.email);
     formData.append("password", user.password);
     formData.append("phone", user.phone || "");
-    formData.append("cnpj", user.cnpj || "");
-    formData.append("categoria", user.categoria || 1);
-    formData.append("descricao", user.descricao || "");
-
-    // Logo
-    if (user.logo) {
-        formData.append("logo", {
-            uri: user.logo,      // URI da imagem
-            type: "image/jpeg",  // tipo do arquivo
-            name: "logo.jpg",    // nome do arquivo
-        } as any);
-        }
-
-    // Múltiplas fotos
-    user.fotos.forEach((uri: string, index: number) => {
-        formData.append("fotos", {
-            uri,
-            type: "image/jpeg", // ou tipo real
-            name: `foto${index}.jpg`,
-        } as any);
-        });
+    formData.append("userType", String(user.userType));
 
     const response = await API_PUBLIC.post("/users/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers: { "Content-Type": "multipart/form-data" },
     });
 
     return response.data;
   } catch (error: any) {
-  if (error.response) {
-    console.log("Django respondeu:", error.response.data);
-  } else if (error.request) {
-    console.log("Requisição enviada mas sem resposta:", error.request);
-  } else {
-    console.log("Erro desconhecido:", error.message);
+    console.error("Erro ao criar usuário:", error.response?.data || error.message);
+    throw error;
   }
-}
 };
 
-// Exemplo de chamada autenticada
+// Buscar perfil do usuário autenticado
 export const getUserProfile = async () => {
   try {
     const response = await API_AUTH.get('/users/me/');
     return response.data;
   } catch (error: any) {
     console.error('Erro ao buscar perfil:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const response = await API_PUBLIC.post('/auth/jwt/create/', { email, password });
+    return response.data; // { access: '...', refresh: '...' }
+  } catch (error: any) {
+    console.error("Erro no login:", error.response?.data || error.message);
     throw error;
   }
 };

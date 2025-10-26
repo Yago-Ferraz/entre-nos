@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image, Text, TouchableOpacity, View,StyleSheet,KeyboardAvoidingView,Platform } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 import StepCard from "../../components/cards/stepCard";
@@ -10,6 +11,9 @@ import { useNavigation } from '@react-navigation/native';
 import NavigationButtons from "../../components/buttons/navigationButtons";
 import { AuthStackParamList } from '../../types/navigationTypes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { createUser, loginUser } from '../../services/userService';
+import { useAuth } from '../..//AuthContext';
+
 
 type CadastroNavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -82,7 +86,7 @@ const Cadastro = () => {
     userType: 1,
     name: "",
     phone: "",
-    cnpj: "",
+    documento: "",
     password: "",
     confirmPassword: "",
     categoria:1,
@@ -94,14 +98,28 @@ const Cadastro = () => {
 
   const step = steps[currentStep];
 
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      console.log("Finalizar cadastro:", formData);
+  const { login } = useAuth()
+const handleNext = async () => {
+  if (currentStep < steps.length - 1) {
+    setCurrentStep(currentStep + 1);
+  } else {
+    console.log("Finalizar cadastro:", formData);
+    try {
+      // Cria o usuário
+      await createUser(formData);
+      console.log("Usuário criado com sucesso!");
+
+      // Faz login automático passando email e password
+      await login(formData.email, formData.password);
+
+      // Navega para a tela seguinte
       navigation.navigate('singuploja', { formData });
+    } catch (error) {
+      console.error("Erro ao criar usuário ou logar:", error);
+      alert("Não foi possível criar o usuário ou logar. Verifique os dados e tente novamente.");
     }
-  };
+  }
+};
 
   const handleBack = () => {
     if (currentStep > 0) {
@@ -112,7 +130,7 @@ const Cadastro = () => {
   const handleInputChange = (text: string) => {
     if (step.id === 2) setFormData({ ...formData, name: text });
     if (step.id === 3) setFormData({ ...formData, phone: text });
-    if (step.id === 4) setFormData({ ...formData, cnpj: text });
+    if (step.id === 4) setFormData({ ...formData, documento: text });
     if (step.id === 5) setFormData({ ...formData, password: text });
     if (step.id === 6) setFormData({ ...formData, email: text });
   };
@@ -187,7 +205,7 @@ const Cadastro = () => {
                 : step.id === 3
                 ? formData.phone
                 : step.id === 4
-                ? formData.cnpj
+                ? formData.documento
                 :step.id === 6 
                 ? formData.email 
                 : ""

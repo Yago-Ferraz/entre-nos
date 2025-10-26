@@ -3,7 +3,7 @@ export type FormDataCadastroLojaType = {
     userType: number,
     name: string,
     phone: string,
-    cnpj: string,
+    documento: string,
     password: string,
     confirmPassword: string,
     categoria: number,
