@@ -3,14 +3,22 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useAuth } from "../AuthContext";
 import AuthStack from "./AuthStack";
 import AppStack from "./AppStack";
+import Empresastack from "./empresaStack";
 
 export default function RootNavigator() {
   const { user } = useAuth();
-  console.log("user no RootNavigator:", user); // deve ser null
+
+  if (user === undefined) return null; // Loading
 
   return (
     <NavigationContainer>
-      {user ? <AppStack /> : <AuthStack />}
+      {!user ? (
+        <AuthStack />
+      ) : user.empresa ? (
+        <AppStack />
+      ) : (
+        <Empresastack />
+      )}
     </NavigationContainer>
   );
 }

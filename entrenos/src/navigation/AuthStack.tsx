@@ -6,8 +6,11 @@ import { ROUTES } from "../Routes"; // Suas constantes de rota
 import Cadastro from "../views/cadastro/cadastro";
 import ForgotPasswordScreen from "../views/esqueciASenha/esqueciASenha";
 import LoginScreen from '../views/login/LoginScreen'; // <-- 1. IMPORTAR SUA TELA
+import { AuthStackParamList } from "../types/navigationTypes";
+import CadastroEmpresa from "../views/cadastro/Cadastroloja"
 
-const Stack = createNativeStackNavigator();
+
+const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 export default function AuthStack() {
   return (
@@ -19,7 +22,8 @@ export default function AuthStack() {
       
       {/* As outras telas continuam registradas */}
       <Stack.Screen name={ROUTES.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
-      <Stack.Screen name={ROUTES.SIGN_UP} component={Cadastro} />
+      <Stack.Screen name={ROUTES.SIGN_UP} component={Cadastro} options={{ headerShown: false }}/>
+      <Stack.Screen name={ROUTES.SING_UP_LOJA} component={CadastroEmpresa} options={{ headerShown: false }} />
 
     </Stack.Navigator>
   );

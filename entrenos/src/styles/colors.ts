@@ -1,8 +1,12 @@
+// src/styles/colors.ts
 export const colors = {
-  primary: '#228932',
-  secondary: '#ffffffff',
-  background: '#f8f9fa',
-  text: '#212529',
-  error: 'red',
-  success: 'green',
+  primary: '#3498db',
+  secondary: '#2ecc71',
+  background: '#f5f5f5',
+  text: '#333333',
+  white: '#ffffff',
+  black: '#000000',
+  gray: '#888888',
+  danger: '#e74c3c',
+  success: '#27ae60',
 };
