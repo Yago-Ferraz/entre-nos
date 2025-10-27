@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-
+import Header from "@/src/components/header/header";
 import { createProduto } from "@/src/services/produto";
 import { cor_primaria, cor_backgroud, typography } from "@/src/global";
 import { ProdutoPayload } from "@/src/types/produto";
@@ -83,7 +83,9 @@ const CreateProduto = () => {
 };
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Cadastrar Produto</Text>
+      <View style={styles.titleContainer}>
+        <Header title="Produto" />
+      </View>
 
       {["nome", "descricao", "preco", "quantidade"].map((field) => (
         <View key={field} style={styles.inputContainer}>
@@ -125,11 +127,14 @@ const CreateProduto = () => {
 export default CreateProduto;
 
 const styles = StyleSheet.create({
+  titleContainer:{
+    width: '100%' ,
+
+  },
   container: {
     flexGrow: 1,
     backgroundColor: cor_backgroud,
-    padding: width * 0.06,
-    paddingBottom: height * 0.05,
+
   },
   title: {
     ...typography.h1,
