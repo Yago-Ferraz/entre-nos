@@ -28,13 +28,13 @@ export default function AppTabs() {
             return <Ionicons name="home" size={size} color={color} />;
           }
           if (route.name === "Loja") {
-            return <MaterialCommunityIcons name="shopping-outline" size={size} color={color} />;
+            return <MaterialCommunityIcons name="basket" size={size} color={color} />;
           }
           if (route.name === "Mensagens") {
-            return <FontAwesome name="comments-o" size={size} color={color} />;
+            return <FontAwesome name="comment" size={size} color={color} />;
           }
           // Configurações
-          return <Ionicons name="settings-outline" size={size} color={color} />;
+          return <Ionicons name="settings" size={size} color={color} />;
         },
       })}
     >
