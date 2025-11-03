@@ -183,28 +183,26 @@ describe('EsqueciASenha - Testes US005', () => {
    * TC006: SQL Injection
    */
   describe('TC006 - Proteção contra SQL Injection', () => {
-    it('deve rejeitar entrada com SQL injection', async () => {
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-      });
-
+    it('deve rejeitar senha com SQL injection devido a caracteres inválidos', async () => {
       const { getByPlaceholderText, getByText } = render(<ForgotPasswordScreen />);
 
       const emailInput = getByPlaceholderText('Insira seu E-mail');
       const novaSenhaInput = getByPlaceholderText('Digite sua nova senha');
       const confirmaSenhaInput = getByPlaceholderText('Confirmar senha');
 
-      fireEvent.changeText(emailInput, "admin' OR '1'='1");
+      fireEvent.changeText(emailInput, "admin@teste.com");
       fireEvent.changeText(novaSenhaInput, "'; DROP TABLE users; --");
       fireEvent.changeText(confirmaSenhaInput, "'; DROP TABLE users; --");
 
       const button = getByText('Criar nova senha');
       fireEvent.press(button);
 
-      // O componente não valida, mas o backend deve sanitizar
+      // Deve rejeitar devido aos caracteres inválidos (';)
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalled();
+        expect(mockAlertFn).toHaveBeenCalledWith(
+          'Erro',
+          'Caracteres inválidos, por favor, digite novamente.'
+        );
       });
     });
   });
@@ -566,6 +564,131 @@ describe('EsqueciASenha - Testes US005', () => {
 
       expect(novaSenhaInput.props.secureTextEntry).toBe(true);
       expect(confirmaSenhaInput.props.secureTextEntry).toBe(true);
+    });
+  });
+
+  /**
+   * TC0025: Email em formato inválido
+   */
+  describe('TC0025 - Validação de formato de email', () => {
+    it('deve exibir erro para email em formato inválido', async () => {
+      const { getByPlaceholderText, getByText } = render(<ForgotPasswordScreen />);
+
+      const emailInput = getByPlaceholderText('Insira seu E-mail');
+      fireEvent.changeText(emailInput, 'emailinvalido');
+
+      const novaSenhaInput = getByPlaceholderText('Digite sua nova senha');
+      fireEvent.changeText(novaSenhaInput, 'NovaSenha123');
+
+      const confirmaSenhaInput = getByPlaceholderText('Confirmar senha');
+      fireEvent.changeText(confirmaSenhaInput, 'NovaSenha123');
+
+      const button = getByText('Criar nova senha');
+      fireEvent.press(button);
+
+      await waitFor(() => {
+        expect(mockAlertFn).toHaveBeenCalledWith(
+          'Erro',
+          'Formato de e-mail inválido'
+        );
+      });
+    });
+
+    it('deve exibir erro para email sem domínio completo', async () => {
+      const { getByPlaceholderText, getByText } = render(<ForgotPasswordScreen />);
+
+      const emailInput = getByPlaceholderText('Insira seu E-mail');
+      fireEvent.changeText(emailInput, 'teste@.com');
+
+      const novaSenhaInput = getByPlaceholderText('Digite sua nova senha');
+      fireEvent.changeText(novaSenhaInput, 'NovaSenha123');
+
+      const confirmaSenhaInput = getByPlaceholderText('Confirmar senha');
+      fireEvent.changeText(confirmaSenhaInput, 'NovaSenha123');
+
+      const button = getByText('Criar nova senha');
+      fireEvent.press(button);
+
+      await waitFor(() => {
+        expect(mockAlertFn).toHaveBeenCalledWith(
+          'Erro',
+          'Formato de e-mail inválido'
+        );
+      });
+    });
+  });
+
+  /**
+   * TC007: Senha com caracteres inválidos
+   */
+  describe('TC007 - Validação de caracteres na senha', () => {
+    it('deve exibir erro para senha com ponto e vírgula', async () => {
+      const { getByPlaceholderText, getByText } = render(<ForgotPasswordScreen />);
+
+      const emailInput = getByPlaceholderText('Insira seu E-mail');
+      fireEvent.changeText(emailInput, 'usuario@teste.com');
+
+      const novaSenhaInput = getByPlaceholderText('Digite sua nova senha');
+      fireEvent.changeText(novaSenhaInput, 'Senha;123');
+
+      const confirmaSenhaInput = getByPlaceholderText('Confirmar senha');
+      fireEvent.changeText(confirmaSenhaInput, 'Senha;123');
+
+      const button = getByText('Criar nova senha');
+      fireEvent.press(button);
+
+      await waitFor(() => {
+        expect(mockAlertFn).toHaveBeenCalledWith(
+          'Erro',
+          'Caracteres inválidos, por favor, digite novamente.'
+        );
+      });
+    });
+
+    it('deve exibir erro para senha com aspas', async () => {
+      const { getByPlaceholderText, getByText } = render(<ForgotPasswordScreen />);
+
+      const emailInput = getByPlaceholderText('Insira seu E-mail');
+      fireEvent.changeText(emailInput, 'usuario@teste.com');
+
+      const novaSenhaInput = getByPlaceholderText('Digite sua nova senha');
+      fireEvent.changeText(novaSenhaInput, 'Senha"123');
+
+      const confirmaSenhaInput = getByPlaceholderText('Confirmar senha');
+      fireEvent.changeText(confirmaSenhaInput, 'Senha"123');
+
+      const button = getByText('Criar nova senha');
+      fireEvent.press(button);
+
+      await waitFor(() => {
+        expect(mockAlertFn).toHaveBeenCalledWith(
+          'Erro',
+          'Caracteres inválidos, por favor, digite novamente.'
+        );
+      });
+    });
+
+    it('deve exibir erro para senha com tags HTML', async () => {
+      const { getByPlaceholderText, getByText } = render(<ForgotPasswordScreen />);
+
+      const emailInput = getByPlaceholderText('Insira seu E-mail');
+      fireEvent.changeText(emailInput, 'usuario@teste.com');
+
+      const novaSenhaInput = getByPlaceholderText('Digite sua nova senha');
+      fireEvent.changeText(novaSenhaInput, '<script>alert("xss")</script>');
+
+      const confirmaSenhaInput = getByPlaceholderText('Confirmar senha');
+      fireEvent.changeText(confirmaSenhaInput, '<script>alert("xss")</script>');
+
+      const button = getByText('Criar nova senha');
+      fireEvent.press(button);
+
+      await waitFor(() => {
+        expect(mockAlertFn).toHaveBeenCalledWith(
+          'Erro',
+          'Caracteres inválidos, por favor, digite novamente.'
+        );
+      });
     });
   });
 });

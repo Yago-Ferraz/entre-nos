@@ -24,6 +24,20 @@ jest.mock('expo-image-picker', () => ({
   },
 }));
 
+// Mock @react-native-voice/voice
+jest.mock('@react-native-voice/voice', () => ({
+  default: {
+    onSpeechStart: jest.fn(),
+    onSpeechEnd: jest.fn(),
+    onSpeechError: jest.fn(),
+    onSpeechResults: jest.fn(),
+    start: jest.fn(() => Promise.resolve()),
+    stop: jest.fn(() => Promise.resolve()),
+    destroy: jest.fn(() => Promise.resolve()),
+    removeAllListeners: jest.fn(),
+  },
+}));
+
 // Mock axios com estrutura completa
 jest.mock('axios', () => ({
   default: {

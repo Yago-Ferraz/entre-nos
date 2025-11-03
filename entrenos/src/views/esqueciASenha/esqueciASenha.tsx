@@ -22,8 +22,22 @@ const ForgotPasswordScreen = () => {
       return;
     }
 
+    // Validação de formato de email (TC0025)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert('Erro', 'Formato de e-mail inválido');
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       Alert.alert('Erro', 'As senhas não coincidem!');
+      return;
+    }
+
+    // Validação de caracteres inválidos na senha (TC007)
+    const invalidCharsRegex = /[;"'<>]/;
+    if (invalidCharsRegex.test(newPassword)) {
+      Alert.alert('Erro', 'Caracteres inválidos, por favor, digite novamente.');
       return;
     }
 
