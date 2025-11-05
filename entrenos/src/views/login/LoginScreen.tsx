@@ -42,6 +42,11 @@ const LoginScreen = () => {
     navigation.navigate(ROUTES.SIGN_UP); 
   };
 
+  const handlefogotpassword = () => {
+    navigation.navigate(ROUTES.FORGOT_PASSWORD); 
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -60,7 +65,7 @@ const LoginScreen = () => {
           <View style={styles.inputContainer}>
             <View style={styles.passwordHeader}>
               <Text style={styles.label}>Senha</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={handlefogotpassword}>
                 <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
               </TouchableOpacity>
             </View>
