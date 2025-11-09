@@ -99,11 +99,14 @@ const Cadastro = () => {
   const step = steps[currentStep];
 
   const { login } = useAuth()
+  const [loading, setLoading] = useState(false);
+
 const handleNext = async () => {
   if (currentStep < steps.length - 1) {
     setCurrentStep(currentStep + 1);
   } else {
     console.log("Finalizar cadastro:", formData);
+    setLoading(true);
     try {
       // Cria o usuário
       await createUser(formData);
@@ -117,6 +120,8 @@ const handleNext = async () => {
     } catch (error) {
       console.error("Erro ao criar usuário ou logar:", error);
       alert("Não foi possível criar o usuário ou logar. Verifique os dados e tente novamente.");
+    }finally {
+      setLoading(false); // Desativa o estado de carregamento
     }
   }
 };
@@ -246,6 +251,8 @@ const handleNext = async () => {
         <NavigationButtons
           onBack={handleBack}
           onNext={handleNext}
+          disableNext={loading}
+           
           disableBack={currentStep === 0}
           nextLabel={currentStep === steps.length - 1 ? "Finalizar" : "Próximo"}
         />
