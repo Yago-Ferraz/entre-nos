@@ -7,13 +7,16 @@ interface Props {
   onNext: () => void;
   disableBack?: boolean;   // opcional
   nextLabel?: string;      // opcional
+   disableNext?: boolean;
 }
 
 const NavigationButtons: React.FC<Props> = ({
+  disableNext = false,
   onBack,
   onNext,
   disableBack = false,
   nextLabel = "Próximo",
+  
 }) => {
   return (
     <View style={styles.container}>
@@ -25,13 +28,27 @@ const NavigationButtons: React.FC<Props> = ({
         ]}
         onPress={onBack}
         disabled={disableBack}
+        accessibilityState={{ disabled: disableBack }}
       >
         <Text style={styles.backText}>Voltar</Text>
+        
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, styles.next]} onPress={onNext}>
-        <Text style={styles.nextText}>{nextLabel}</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+  style={[
+    styles.button,
+    styles.next,
+    disableNext && { opacity: 0.5 }, 
+  ]}
+  onPress={onNext}
+  disabled={disableNext} 
+  accessibilityState={{ disabled: disableNext }} 
+  testID="botaoProximo"
+>
+  <Text style={styles.nextText}>
+    {disableNext ? "Carregando..." : nextLabel} {/* opcional: feedback UX */}
+  </Text>
+</TouchableOpacity>
     </View>
   );
 };
