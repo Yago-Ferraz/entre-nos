@@ -24,6 +24,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomInput from "@/src/components/customInput/customInput";
 import Stepper from "@/src/components/buttons/NextBackStepper";
 import Buttongeneric from "@/src/components/buttons/buttongeneric";
+import AlertMessage from "@/src/components/alertas/AlertMessage";
 
 const { width } = Dimensions.get("window");
 
@@ -37,6 +38,12 @@ const CreateProduto = () => {
     quantidade: 0,
     imagem: "",
   });
+  const [alert, setAlert] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+
+  const showAlert = (msg: string, type: "success" | "error" = "success") => {
+    setAlert({ msg, type });
+  };
+
 
   const handleChange = (key: keyof ProdutoPayload, value: string | number) => {
     setForm({ ...form, [key]: value });
@@ -63,10 +70,7 @@ const CreateProduto = () => {
   const handleSubmit = async () => {
     try {
       if (!form.nome || !form.preco || form.quantidade <= 0) {
-        Alert.alert(
-          "⚠️ Atenção",
-          "Nome, Preço e Quantidade (maior que 0) são obrigatórios."
-        );
+        showAlert("Nome, Preço e Quantidade são obrigatórios!", "error");
         return;
       }
 
@@ -95,7 +99,8 @@ const CreateProduto = () => {
 
       await createProduto(formData, true);
 
-      Alert.alert("✅ Sucesso", "Produto criado com sucesso!");
+      showAlert("Produto criado com sucesso!", "success");
+
 
       setForm({
         nome: "",
@@ -108,11 +113,19 @@ const CreateProduto = () => {
       navigation.goBack();
     } catch (error: any) {
       console.error("Erro ao criar produto:", error.response?.data || error.message);
-      Alert.alert("❌ Erro", "Não foi possível criar o produto.");
+      showAlert("Não foi possível criar o produto.", "error");
     }
   };
 
   return (
+    <View style={{ flex: 1 }}>
+       {alert && (
+      <AlertMessage
+        message={alert.msg}
+        type={alert.type}
+        onHide={() => setAlert(null)}
+      />
+    )}
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.titleContainer}>
         <Header title="Produto" showBackButton={true} onBackPress={() => navigation.goBack()} />
@@ -175,8 +188,9 @@ const CreateProduto = () => {
         />
 
       </View>
-    </ScrollView>
+    </ScrollView></View>
   );
+  
 };
 
 export default CreateProduto;
