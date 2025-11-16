@@ -7,7 +7,8 @@ import Cadastro from "../views/cadastro/cadastro";
 import ForgotPasswordScreen from "../views/esqueciASenha/esqueciASenha";
 import LoginScreen from '../views/login/LoginScreen'; // <-- 1. IMPORTAR SUA TELA
 import { AuthStackParamList } from "../types/navigationTypes";
-import CadastroEmpresa from "../views/cadastro/Cadastroloja"
+import CadastroEmpresa from "../views/cadastro/Cadastroloja";
+
 
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
