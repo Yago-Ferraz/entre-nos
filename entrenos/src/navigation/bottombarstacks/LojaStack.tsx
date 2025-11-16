@@ -5,7 +5,7 @@ import Createproduto from "../../views/home/produtos/createproduto";
 
 const Stack = createNativeStackNavigator();
 
-export default function lojastack() {
+export default function Lojastack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeMain" component={HomeScreen} />
