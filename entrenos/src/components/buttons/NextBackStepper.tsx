@@ -4,7 +4,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Dimensions
 } from 'react-native';
+
+import {typography} from '@/src/global'
+
+const { width, height } = Dimensions.get('window');
+
 
 type StepperProps = {
   value: number;
@@ -12,7 +18,7 @@ type StepperProps = {
 };
 
 const Stepper:React.FC<StepperProps> = ({ value, onChange }) => {
-
+  
 
   const handleIncrement = () => {
     onChange(value + 1);
@@ -53,14 +59,12 @@ const Stepper:React.FC<StepperProps> = ({ value, onChange }) => {
 
 const styles = StyleSheet.create({
   appContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    ... typography ,
     marginBottom: 20,
   },
   // Estilos do componente Stepper
@@ -68,11 +72,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    // Define a borda para o container principal
     borderWidth: 1,
-    borderColor: '#006400', // Verde escuro para a borda
+    borderColor: '#000000ff', // Verde escuro para a borda
     borderRadius: 8,        // Cantos arredondados
     overflow: 'hidden',     // Garante que os filhos não "vazem" dos cantos
+     alignSelf: 'flex-start'
   },
   buttonBase: {
     backgroundColor: '#008000', // Verde
@@ -107,9 +111,8 @@ const styles = StyleSheet.create({
     borderColor: '#006400', // Mesma cor da borda externa
   },
   valueText: {
+    ... typography.h3,
     color: '#333333', // Texto preto/cinza escuro
-    fontSize: 20,
-    fontWeight: '500',
   },
 });
 

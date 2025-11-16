@@ -15,10 +15,10 @@ const ProdutoScreem = () => {
   };
 
 
+
   return (
     <View style={styles.container}>
       {/* Conteúdo da tela */}
-
 
       
 
