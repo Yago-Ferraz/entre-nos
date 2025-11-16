@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ROUTES, AuthStackParamList } from '../../../Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Stepper from '../../../components/buttons/NextBackStepper'
+
 
 type ProdutoScreenNav = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -20,7 +20,7 @@ const ProdutoScreem = () => {
     <View style={styles.container}>
       {/* Conteúdo da tela */}
 
-      
+     
 
       <TouchableOpacity style={styles.fab} onPress={goToCreate}>
         <Text style={styles.fabText}>+</Text>
