@@ -3,8 +3,8 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ROUTES, AuthStackParamList } from '../../../Routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-
+import CustomButton from '@/src/components/customButton/customButton';
+import Icon from 'react-native-vector-icons/FontAwesome';
 type ProdutoScreenNav = NativeStackNavigationProp<AuthStackParamList>;
 
 const ProdutoScreem = () => {
