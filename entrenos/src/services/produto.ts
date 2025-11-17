@@ -22,3 +22,8 @@ export const getProdutosAnalytics = async () => {
   const response = await API_AUTH.get("/produtos/analytics/");
   return response.data;
 };
+
+export const getProdutos = async () => {
+  const response = await API_AUTH.get("/produtos/");
+  return response.data;
+};
