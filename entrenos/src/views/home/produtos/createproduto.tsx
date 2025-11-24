@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -25,11 +25,19 @@ import CustomInput from "@/src/components/customInput/customInput";
 import Stepper from "@/src/components/buttons/NextBackStepper";
 import Buttongeneric from "@/src/components/buttons/buttongeneric";
 import AlertMessage from "@/src/components/alertas/AlertMessage";
-
+import { RouteProp } from "@react-navigation/native";
+import { AuthStackParamList } from "../../../Routes";
+import { useRoute } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
+
+type CreateProdutoRouteProp = RouteProp<AuthStackParamList, "CREATEPRODUTO">;
 
 const CreateProduto = () => {
   const navigation = useNavigation();
+  const route = useRoute<CreateProdutoRouteProp>();
+  const produto = route.params?.produto;
+
+  
 
   const [form, setForm] = useState<ProdutoPayload>({
     nome: "",
@@ -43,7 +51,18 @@ const CreateProduto = () => {
   const showAlert = (msg: string, type: "success" | "error" = "success") => {
     setAlert({ msg, type });
   };
-
+  
+  useEffect(() => {
+  if (produto) {
+    setForm({
+      nome: produto.results.nome || "",
+      descricao: produto.results.descricao || "",
+      preco: String(produto.results.preco) || "",
+      quantidade: produto.results.quantidade || 0,
+      imagem: produto.results.imagem || "",
+    });
+  }
+}, [produto]);
 
   const handleChange = (key: keyof ProdutoPayload, value: string | number) => {
     setForm({ ...form, [key]: value });

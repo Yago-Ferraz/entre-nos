@@ -1,16 +1,16 @@
 import {FormDataCadastroLojaType} from '@/src/types/cadastro/cadastro';
+import { Produto } from '@/src/types/produto';
 export const ROUTES = {
-  LOGIN: 'Login', // <-- ADICIONE ESTA LINHA
+  LOGIN: 'Login',
   FORGOT_PASSWORD: 'ForgotPassword',
   SIGN_UP: 'Signup',
   SING_UP_LOJA: "singuploja",
   HOME: 'Home',
-  PRODUTOSCREEM: 'ProdutoScreem',
-  CREATEPRODUTO: 'Createproduto'
+  PRODUTOSCREEM: 'PRODUTOSCREEM',
+  CREATEPRODUTO: 'CREATEPRODUTO'
 
 } as const;
 
-// src/navigation/navigationTypes.ts
 
 
 export type AuthStackParamList = {
@@ -20,7 +20,8 @@ export type AuthStackParamList = {
   singuploja: { formData: FormDataCadastroLojaType };
   Home: undefined;
   PRODUTOSCREEM: undefined,
-  CREATEPRODUTO: undefined
+  CREATEPRODUTO: { produto: Produto } | undefined;
+  
 };
 
 

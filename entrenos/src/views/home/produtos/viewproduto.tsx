@@ -28,8 +28,7 @@ const ProdutoScreem = () => {
 
   // Ação ao clicar em um Produto da lista
   const handleProductPress = (produto: Produto) => {
-    console.log("Clicou no produto:", produto.results.nome);
-    // Exemplo: navigation.navigate(ROUTES.EDIT_PRODUTO, { id: produto.id });
+    navigation.navigate(ROUTES.CREATEPRODUTO, {produto} );
   };
 
   const [analytics, setAnalytics] = useState<{
@@ -98,12 +97,13 @@ const ProdutoScreem = () => {
   // --- Item da Lista usando CARDBASE ---
   const renderItem = ({ item }: { item: Produto }) => (
     <View style={styles.cardWrapper}>
-        <CardBase width="100%" style={[styles.paddingcard, styles.cardItem]}>
-            <TouchableOpacity 
+        <TouchableOpacity 
                 style={styles.productTouchArea} 
                 onPress={() => handleProductPress(item)}
                 activeOpacity={0.7}
             >
+        <CardBase width="100%" style={[styles.paddingcard, styles.cardItem]}>
+            
                 {/* Conteúdo do Produto (Layout Row) */}
                 <View style={styles.productRow}>
                     <Image 
@@ -122,8 +122,9 @@ const ProdutoScreem = () => {
                         </Text>
                     </View>
                 </View>
-            </TouchableOpacity>
+            
         </CardBase>
+        </TouchableOpacity>
     </View>
   );
 
@@ -165,17 +166,22 @@ const ProdutoScreem = () => {
                         </View>
                     </CardBase>
                 </TouchableOpacity>
+                {renderListHeader()}
             </View>
+            
 
             {/* --- ÁREA DE LISTAGEM --- */}
             <FlatList
                 data={filteredProdutos}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
-                ListHeaderComponent={renderListHeader}
+                
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
                 style={styles.flatList}
+                keyboardShouldPersistTaps="handled"
+
+                
             />
         </>
       )}
