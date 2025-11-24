@@ -9,4 +9,7 @@ export const colors = {
   gray: '#888888',
   danger: '#e74c3c',
   success: '#27ae60',
+  // Cores do onboarding
+  onboardingGreen: '#2e7d32',
+  onboardingNavy: '#1a237e',
 };

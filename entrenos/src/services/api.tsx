@@ -1,7 +1,7 @@
-import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from 'axios';
 
-export const baseurl= 'http://192.168.1.65:8003'
+export const baseurl= 'http://10.74.247.43:8003'
 
 // 1. API pública (ex: criar usuário, login)
 export const API_PUBLIC = axios.create({
