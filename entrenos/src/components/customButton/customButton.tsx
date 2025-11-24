@@ -8,6 +8,7 @@ import {
   ViewStyle       
 } from 'react-native';
 import { colors } from '../../styles/colors';
+import AlertMessage from "@/src/components/alertas/AlertMessage";
 
 
 interface CustomButtonProps {
@@ -32,7 +33,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   width = 300,           
 }) => {
 
- 
+  
   const textAndIconStyle = [
     styles.buttonText, 
     { color: textColor } 

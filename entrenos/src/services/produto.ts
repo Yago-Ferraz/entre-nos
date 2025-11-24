@@ -17,3 +17,13 @@ export const createProduto = async (produto: ProdutoPayload | FormData, isMultip
   const response = await API_AUTH.post("/produtos/", data, { headers });
   return response.data;
 };
+
+export const getProdutosAnalytics = async () => {
+  const response = await API_AUTH.get("/produtos/analytics/");
+  return response.data;
+};
+
+export const getProdutos = async () => {
+  const response = await API_AUTH.get("/produtos/");
+  return response.data;
+};

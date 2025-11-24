@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { colors } from '../../styles/colors';
-
+import { typography, cor_backgroud, cor_primaria } from '@/src/global';
 
 interface CustomInputProps {
-  label:string;
+  label: string;
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   keyboardType?: 'email-address' | 'default';
+  width?: number | string; // agora aceita '50%', '80%', etc.
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -19,45 +19,41 @@ const CustomInput: React.FC<CustomInputProps> = ({
   onChangeText,
   secureTextEntry = false,
   keyboardType = 'default',
+  width = '100%',
 }) => {
   return (
-  <View style={styles.container}>
-    <Text style={styles.label}>{label}</Text>
-    <TextInput
-      style={styles.input}
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChangeText}
-      secureTextEntry={secureTextEntry}
-      keyboardType={keyboardType}
-      autoCapitalize="none"
-    />
-  </View>
+    <View style={[styles.container, width ? { width } : {}] as any}>
+      <Text style={styles.label}>{label}</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
+        autoCapitalize="none"
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
     marginBottom: 15,
   },
   label: {
-    fontSize: 20,
+    ...typography.h3,
     marginBottom: 3,
-    fontWeight: 'bold',
-
   },
   input: {
-    width: '100%',
-    height: 50,
-    borderColor: '#FFA629', 
-    backgroundColor: colors.secondary,
+    width: '100%', // sempre 100% da view
+    borderColor: cor_primaria,
+    backgroundColor: cor_backgroud,
     borderWidth: 1,
     borderRadius: 15,
     paddingHorizontal: 15,
     marginBottom: 5,
-
-    
   },
 });
 

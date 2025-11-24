@@ -5,3 +5,19 @@ export type ProdutoPayload = {
   quantidade: number;
   imagem: string;
 };
+
+export type Produto = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  criador_nome?: string; 
+  created_by_nome: string | null;
+  updated_by_nome: string | null;
+  results: {
+    nome: string;
+    descricao: string;
+    preco: string;     
+    quantidade: number;
+    imagem: string;
+  };
+};
