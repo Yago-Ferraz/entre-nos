@@ -1,12 +1,15 @@
 import React from "react";
+import { Platform } from "react-native"; // <--- Importante: Importar Platform
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons, MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
+
+// Seus Stacks
 import HomeStack from "./bottombarstacks/HomeStack";
 import LojaStack from "./bottombarstacks/LojaStack";
-import MensagensStacks from "./bottombarstacks/MensagensStacks";
+import MensagensStacks from "./bottombarstacks/MensagensStacks"; 
 import SettingsStack from "./bottombarstacks/SettingsStack";
 
-import { cor_primaria, cor_secundaria,cor_terciaria, cor_backgroud} from "../global";
+import { cor_primaria, cor_secundaria, cor_backgroud } from "../global";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,11 +22,14 @@ export default function AppTabs() {
           backgroundColor: cor_primaria,
           borderTopColor: cor_backgroud,
           borderTopWidth: 1,
+          height: Platform.OS === 'android' ? 70 : 85, 
+          paddingBottom: Platform.OS === 'android' ? 12 : 30,
+          paddingTop: 8, 
+          // -----------------------------
         },
         tabBarActiveTintColor: cor_secundaria,
         tabBarInactiveTintColor: cor_backgroud,
         tabBarIcon: ({ color, size }) => {
-          // render direto no JSX
           if (route.name === "Home") {
             return <Ionicons name="home" size={size} color={color} />;
           }
@@ -33,7 +39,6 @@ export default function AppTabs() {
           if (route.name === "Mensagens") {
             return <FontAwesome name="comment" size={size} color={color} />;
           }
-          // Configurações
           return <Ionicons name="settings" size={size} color={color} />;
         },
       })}
@@ -42,7 +47,6 @@ export default function AppTabs() {
       <Tab.Screen name="Loja" component={LojaStack} />
       <Tab.Screen name="Mensagens" component={MensagensStacks} />
       <Tab.Screen name="Settings" component={SettingsStack} />
-
     </Tab.Navigator>
   );
 }
