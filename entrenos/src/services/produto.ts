@@ -27,3 +27,44 @@ export const getProdutos = async () => {
   const response = await API_AUTH.get("/produtos/");
   return response.data;
 };
+
+export const patchProduto = async (id: number, produto: any) => {
+  const formData = new FormData();
+
+  Object.entries(produto).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value as any);
+    }
+  });
+
+  // Se for imagem, trata separadamente
+  if (produto.imagem && typeof produto.imagem === "string") {
+    const uriParts = produto.imagem.split("/");
+    const fileName = uriParts.pop() || "photo.jpg";
+    let fileType = fileName.split(".").pop();
+
+    if (!["jpg", "jpeg", "png"].includes(fileType?.toLowerCase() || "")) {
+      fileType = "jpeg";
+    }
+
+    formData.append("imagem", {
+      uri: produto.imagem,
+      name: fileName,
+      type: `image/${fileType}`,
+    } as any);
+  }
+
+  const response = await API_AUTH.patch(`/produtos/${id}/`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
+
+export const deleteProduto = async (id: number) => {
+  const response = await API_AUTH.delete(`/produtos/${id}/`);
+  return response.data;
+};

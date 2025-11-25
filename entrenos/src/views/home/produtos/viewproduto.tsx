@@ -9,6 +9,8 @@ import CardBase from '@/src/components/cards/cardbase'; // Seu componente CardBa
 import { typography, cor_terciaria, cor_secundaria } from '@/src/global';
 import Header from '@/src/components/header/header';
 import { Produto } from '../../../types/produto';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const { width,height } = Dimensions.get("window");
 
@@ -41,7 +43,8 @@ const ProdutoScreem = () => {
   const [listproduto, setlistproduto] = useState<Produto[]>([]); 
   const [searchText, setSearchText] = useState('');
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -49,23 +52,23 @@ const ProdutoScreem = () => {
           getProdutos(),
           getProdutosAnalytics()
         ]);
-        
+
         if (Array.isArray(produtosData)) {
-            setlistproduto(produtosData);
-        } else {
-            console.log("Formato de dados inesperado", produtosData);
+          setlistproduto(produtosData);
         }
 
         setAnalytics(analyticsData);
       } catch (error) {
-        console.log('Erro ao carregar dados', error);
+        console.log("Erro ao carregar dados", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [])
+);
+
 
   const filteredProdutos = listproduto.filter(item => 
     item.results.nome.toLowerCase().includes(searchText.toLowerCase())

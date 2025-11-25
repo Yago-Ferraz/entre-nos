@@ -6,6 +6,7 @@ export const cor_secundaria = '#021757'
 export const cor_terciaria = '#FFA629'
 export const cor_backgroud = '#F8F8F8'
 export const cinza = '#868686'
+export const cor_vermelho = '#E00000'
 
 
 
