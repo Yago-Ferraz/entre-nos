@@ -7,7 +7,8 @@ export const ROUTES = {
   SING_UP_LOJA: "singuploja",
   HOME: 'Home',
   PRODUTOSCREEM: 'PRODUTOSCREEM',
-  CREATEPRODUTO: 'CREATEPRODUTO'
+  CREATEPRODUTO: 'CREATEPRODUTO',
+  CAIXA: 'CAIXA'
 
 } as const;
 
@@ -21,6 +22,7 @@ export type AuthStackParamList = {
   Home: undefined;
   PRODUTOSCREEM: undefined,
   CREATEPRODUTO: { produto: Produto } | undefined;
+  CAIXA: undefined,
   
 };
 

@@ -69,7 +69,7 @@ const HomeScreen: React.FC = () => {
         iconName="database"
         title="moedas"
         subtitle="105 Novas"
-        onPress={() => console.log("moedas clicado")}
+        onPress={() => navigation.navigate(ROUTES.CAIXA as never)}
       />
     </ScrollView>
   
