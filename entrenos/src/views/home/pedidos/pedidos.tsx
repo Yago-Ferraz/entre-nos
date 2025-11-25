@@ -29,12 +29,6 @@ const getStatusColor = (status: string) => {
   }
 };
 
-// Função auxiliar para simular nome de produto pelo ID (já que a API só traz ID)
-const getProductName = (id: number) => {
-  const map: { [key: number]: string } = { 101: "Bolo Red Velvet - Kg", 102: "Cookies de Chocolate" };
-  return map[id] || `Produto #${id}`;
-};
-
 export default function MeusPedidos() {
   const navigation = useNavigation();
   
@@ -84,7 +78,7 @@ export default function MeusPedidos() {
     const payloadPost = {
       usuario: selectedPedido.usuario,
       itens: selectedPedido.itens.map(item => ({
-        produto: item.produto,
+        produto: item.produto.id,
         quantidade: item.quantidade
       }))
     };
@@ -121,9 +115,8 @@ export default function MeusPedidos() {
           renderItem={({ item }: { item: PedidoGet }) => (
             <CardBase onPress={() => handleOpenModal(item)} style={styles.card}>
               <View style={styles.row}>
-                {/* Imagem Placeholder (API não fornece foto) */}
                 <Image 
-                  source={{ uri: `https://picsum.photos/seed/${item.id}/200` }} 
+                  source={{ uri: item.itens.length > 0 ? item.itens[0].produto.results.imagem : `https://picsum.photos/seed/${item.id}/200` }} 
                   style={styles.image} 
                 />
 
@@ -189,7 +182,7 @@ export default function MeusPedidos() {
                     <View key={index} style={styles.productRow}>
                         <View style={{flex: 1}}>
                             <Text style={styles.productText}>
-                                {prod.quantidade}x {getProductName(prod.produto)}
+                                {prod.quantidade}x {prod.produto.results.nome}
                             </Text>
                         </View>
                         <Text style={styles.productPrice}>

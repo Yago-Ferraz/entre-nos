@@ -1,16 +1,19 @@
+import { Produto } from '../types/produto';
+
 export interface ItemPedidoGet {
   id: number;
-  produto: number;
+  produto: Produto;
   quantidade: number;
-  preco_unitario: string; 
-  subtotal: string;       
+  preco_unitario: string;
+  subtotal: number;
 }
 
 export interface PedidoGet {
   id: number;
   usuario: number;
-  status: string;         
-  valor_total: string;    
+  empresa: number;
+  status: string;
+  valor_total: string;
   itens: ItemPedidoGet[];
 }
 
