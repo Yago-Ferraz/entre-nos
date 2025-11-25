@@ -11,12 +11,18 @@ export const styles = StyleSheet.create({
     borderBottomRightRadius: 12,
     height: height*0.12,
     justifyContent:"center",
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   title: {
     ...typography.h1,
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
-    
   },
+  backButton: {
+    position: 'absolute',
+    left: width * 0.068,
+    zIndex: 1,
+  }
 });

@@ -4,17 +4,18 @@ import ProdutoScreem from "../../views/home/produtos/viewproduto";
 import Createproduto from "../../views/home/produtos/createproduto";
 import {AuthStackParamList} from "../../Routes";
 import FluxoCaixaScreen from "../../views/home/moeda/caixa";
+import MeusPedidos from "../../views/home/pedidos/pedidos";
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 export default function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="HomeInitial" component={HomeScreen} />
       <Stack.Screen name="PRODUTOSCREEM" component={ProdutoScreem} />
       <Stack.Screen name="CREATEPRODUTO" component={Createproduto} />
       <Stack.Screen name="CAIXA" component={FluxoCaixaScreen} />
-
+      <Stack.Screen name="PEDIDOS" component={MeusPedidos} />
     </Stack.Navigator>
   );
 }

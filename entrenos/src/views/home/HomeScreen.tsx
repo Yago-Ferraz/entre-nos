@@ -54,7 +54,7 @@ const HomeScreen: React.FC = () => {
         iconColor={cor_terciaria}
         title="Pedidos"
         subtitle="3 Novos"
-        onPress={() => console.log("Pedidos clicado")}
+        onPress={() => navigation.navigate(ROUTES.PEDIDOS as never)}
         style={{ marginRight: 16 }}
       />
       <QuickActionCard

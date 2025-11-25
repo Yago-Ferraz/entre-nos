@@ -5,11 +5,11 @@ export const ROUTES = {
   FORGOT_PASSWORD: 'ForgotPassword',
   SIGN_UP: 'Signup',
   SING_UP_LOJA: "singuploja",
-  HOME: 'Home',
+  HOME: 'HomeInitial',
   PRODUTOSCREEM: 'PRODUTOSCREEM',
   CREATEPRODUTO: 'CREATEPRODUTO',
-  CAIXA: 'CAIXA'
-
+  CAIXA: 'CAIXA',
+  PEDIDOS: 'PEDIDOS'
 } as const;
 
 
@@ -17,13 +17,11 @@ export const ROUTES = {
 export type AuthStackParamList = {
   Login: undefined;
   ForgotPassword: undefined;
-  Signup: undefined;
+  Signup:undefined;
   singuploja: { formData: FormDataCadastroLojaType };
-  Home: undefined;
+  HomeInitial: undefined;
   PRODUTOSCREEM: undefined,
   CREATEPRODUTO: { produto: Produto } | undefined;
   CAIXA: undefined,
-  
+  PEDIDOS: undefined,
 };
-
-
