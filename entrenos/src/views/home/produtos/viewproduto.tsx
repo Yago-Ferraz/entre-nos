@@ -9,6 +9,8 @@ import CardBase from '@/src/components/cards/cardbase'; // Seu componente CardBa
 import { typography, cor_terciaria, cor_secundaria } from '@/src/global';
 import Header from '@/src/components/header/header';
 import { Produto } from '../../../types/produto';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const { width,height } = Dimensions.get("window");
 
@@ -28,8 +30,7 @@ const ProdutoScreem = () => {
 
   // Ação ao clicar em um Produto da lista
   const handleProductPress = (produto: Produto) => {
-    console.log("Clicou no produto:", produto.results.nome);
-    // Exemplo: navigation.navigate(ROUTES.EDIT_PRODUTO, { id: produto.id });
+    navigation.navigate(ROUTES.CREATEPRODUTO, {produto} );
   };
 
   const [analytics, setAnalytics] = useState<{
@@ -42,7 +43,8 @@ const ProdutoScreem = () => {
   const [listproduto, setlistproduto] = useState<Produto[]>([]); 
   const [searchText, setSearchText] = useState('');
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -50,23 +52,23 @@ const ProdutoScreem = () => {
           getProdutos(),
           getProdutosAnalytics()
         ]);
-        
+
         if (Array.isArray(produtosData)) {
-            setlistproduto(produtosData);
-        } else {
-            console.log("Formato de dados inesperado", produtosData);
+          setlistproduto(produtosData);
         }
 
         setAnalytics(analyticsData);
       } catch (error) {
-        console.log('Erro ao carregar dados', error);
+        console.log("Erro ao carregar dados", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [])
+);
+
 
   const filteredProdutos = listproduto.filter(item => 
     item.results.nome.toLowerCase().includes(searchText.toLowerCase())
@@ -98,12 +100,13 @@ const ProdutoScreem = () => {
   // --- Item da Lista usando CARDBASE ---
   const renderItem = ({ item }: { item: Produto }) => (
     <View style={styles.cardWrapper}>
-        <CardBase width="100%" style={[styles.paddingcard, styles.cardItem]}>
-            <TouchableOpacity 
+        <TouchableOpacity 
                 style={styles.productTouchArea} 
                 onPress={() => handleProductPress(item)}
                 activeOpacity={0.7}
             >
+        <CardBase width="100%" style={[styles.paddingcard, styles.cardItem]}>
+            
                 {/* Conteúdo do Produto (Layout Row) */}
                 <View style={styles.productRow}>
                     <Image 
@@ -122,8 +125,9 @@ const ProdutoScreem = () => {
                         </Text>
                     </View>
                 </View>
-            </TouchableOpacity>
+            
         </CardBase>
+        </TouchableOpacity>
     </View>
   );
 
@@ -165,17 +169,22 @@ const ProdutoScreem = () => {
                         </View>
                     </CardBase>
                 </TouchableOpacity>
+                {renderListHeader()}
             </View>
+            
 
             {/* --- ÁREA DE LISTAGEM --- */}
             <FlatList
                 data={filteredProdutos}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderItem}
-                ListHeaderComponent={renderListHeader}
+                
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
                 style={styles.flatList}
+                keyboardShouldPersistTaps="handled"
+
+                
             />
         </>
       )}

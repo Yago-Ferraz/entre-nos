@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   View,
   Text,
@@ -14,9 +14,9 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 
 import Header from "@/src/components/header/header";
-import { createProduto } from "@/src/services/produto";
+import { createProduto, patchProduto, deleteProduto } from "@/src/services/produto";
 
-import { cor_primaria, cor_backgroud, typography, cinza } from "@/src/global";
+import { cor_primaria, cor_backgroud, typography, cinza, cor_vermelho } from "@/src/global";
 import { ProdutoPayload } from "@/src/types/produto";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -25,11 +25,19 @@ import CustomInput from "@/src/components/customInput/customInput";
 import Stepper from "@/src/components/buttons/NextBackStepper";
 import Buttongeneric from "@/src/components/buttons/buttongeneric";
 import AlertMessage from "@/src/components/alertas/AlertMessage";
-
+import { RouteProp } from "@react-navigation/native";
+import { AuthStackParamList } from "../../../Routes";
+import { useRoute } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
+
+type CreateProdutoRouteProp = RouteProp<AuthStackParamList, "CREATEPRODUTO">;
 
 const CreateProduto = () => {
   const navigation = useNavigation();
+  const route = useRoute<CreateProdutoRouteProp>();
+  const produto = route.params?.produto;
+
+  
 
   const [form, setForm] = useState<ProdutoPayload>({
     nome: "",
@@ -43,11 +51,62 @@ const CreateProduto = () => {
   const showAlert = (msg: string, type: "success" | "error" = "success") => {
     setAlert({ msg, type });
   };
-
+  
+  useEffect(() => {
+  if (produto) {
+    setForm({
+      nome: produto.results.nome || "",
+      descricao: produto.results.descricao || "",
+      preco: String(produto.results.preco) || "",
+      quantidade: produto.results.quantidade || 0,
+      imagem: produto.results.imagem || "",
+    });
+  }
+}, [produto]);
 
   const handleChange = (key: keyof ProdutoPayload, value: string | number) => {
     setForm({ ...form, [key]: value });
   };
+
+const handleput = async (formAtual: ProdutoPayload, id: number) => {
+
+  if (!produto || !produto.results) {
+    console.error("Produto ainda não carregado");
+    return;
+  }
+
+  try {
+    const dataToSend: any = {};
+
+    if (formAtual.nome !== produto.results.nome)
+      dataToSend.nome = formAtual.nome;
+
+    if (formAtual.descricao !== produto.results.descricao)
+      dataToSend.descricao = formAtual.descricao;
+
+    if (String(formAtual.preco) !== String(produto.results.preco))
+      dataToSend.preco = formAtual.preco;
+
+    if (formAtual.quantidade !== produto.results.quantidade)
+      dataToSend.quantidade = formAtual.quantidade;
+
+    if (formAtual.imagem !== produto.results.imagem)
+      dataToSend.imagem = formAtual.imagem;
+
+    await patchProduto(id, dataToSend);
+    navigation.goBack();
+
+  } catch (e: any) {
+    console.log("ERRO PATCH:", e.response?.data);
+  }
+};
+
+const handledelete = async (id: number) => {
+  await deleteProduto(id);
+  navigation.goBack();
+}
+
+
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -180,12 +239,30 @@ const CreateProduto = () => {
         />
 
         
+        {produto? (<View style={styles.containerbotaocoisas}>
+          <Buttongeneric
+          leftIcon={<Ionicons name="save" size={20} color="#FFF" />}
+          title="Salvar"
+          onPress={()=>{handleput(form, produto.id)}}
+        />
 
-        {/* Botão */}
         <Buttongeneric
+          title="Excluir"
+          leftIcon={<Ionicons name="trash" size={20} color="#FFF" />}
+          onPress={()=>{handledelete(produto.id)}}
+          style={{backgroundColor:cor_vermelho}}
+        />
+          
+          
+           </View>):
+       (
+          <Buttongeneric
           title="Salvar Produto"
           onPress={handleSubmit}
-        />
+        />)
+        
+        }
+        
 
       </View>
     </ScrollView></View>
@@ -201,6 +278,11 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     backgroundColor: cor_backgroud,
+  },
+
+  containerbotaocoisas:{
+    flexDirection:'row',
+    justifyContent:'space-around',
   },
 
   // Imagem
