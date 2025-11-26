@@ -16,14 +16,16 @@ import Header from "@/src/components/header/header";
 import CardBase from "@/src/components/cards/cardbase";
 import { useNavigation } from "@react-navigation/native";
 import { pedidoService } from "@/src/services/pedidos";
-import { PedidoGet, ItemPedidoGet } from "@/src/types/pedidos";
+import { PedidoGet, ItemPedidoGet, STATUS_CHOICES, StatusPedido } from "@/src/types/pedidos";
 
 
 // Função auxiliar para mapear Status -> Cor
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'pendente': return '#FFA500'; // Laranja
-    case 'entregue': return '#3CB371'; // Verde
+    case 'processando': return '#2196F3'; // Azul
+    case 'pago': return '#4CAF50'; // Verde escuro
+    case 'concluido': return '#3CB371'; // Verde
     case 'cancelado': return '#FF0000'; // Vermelho
     default: return '#888';
   }
@@ -39,7 +41,9 @@ export default function MeusPedidos() {
   const [selectedPedido, setSelectedPedido] = useState<PedidoGet | null>(null);
   
   // A descrição não vem na API, então vamos criar um estado local temporário
-  const [observacaoLocal, setObservacaoLocal] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState<StatusPedido | null>(null);
+  const [isSelectingStatus, setIsSelectingStatus] = useState(false);
 
   // Simula o carregamento da API (GET)
   useEffect(() => {
@@ -61,7 +65,9 @@ export default function MeusPedidos() {
   // Abrir Modal
   const handleOpenModal = (item: PedidoGet) => {
     setSelectedPedido(item);
-    setObservacaoLocal(""); // Limpa ou carrega se a API tivesse esse campo
+    setSelectedStatus(item.status as StatusPedido);
+    setDescricao(item.descricao || ""); // Preenche a descrição
+    setIsSelectingStatus(false); // Reseta o seletor de status
     setModalVisible(true);
   };
 
@@ -69,29 +75,27 @@ export default function MeusPedidos() {
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedPedido(null);
+    setIsSelectingStatus(false);
   };
 
-  // Ação de Salvar (POST)
+  // Ação de Salvar (PATCH)
   const handleSave = async () => {
-    if (!selectedPedido) return;
-
-    const payloadPost = {
-      usuario: selectedPedido.usuario,
-      itens: selectedPedido.itens.map(item => ({
-        produto: item.produto.id,
-        quantidade: item.quantidade
-      }))
-    };
+    if (!selectedPedido || !selectedStatus) return;
 
     try {
-      await pedidoService.createPedido(payloadPost);
-      Alert.alert("Sucesso", "Pedido criado com sucesso!");
+      await pedidoService.updatePedidoStatus(selectedPedido.id, {
+        status: selectedStatus,
+        descricao: descricao,
+      });
+      Alert.alert("Sucesso", "Pedido atualizado com sucesso!");
       handleCloseModal();
+      
       // Atualiza a lista de pedidos
       const data = await pedidoService.getPedidos();
       setPedidos(data);
+
     } catch {
-      Alert.alert("Erro", "Não foi possível criar o pedido.");
+      Alert.alert("Erro", "Não foi possível atualizar o pedido.");
     }
   };
 
@@ -163,14 +167,63 @@ export default function MeusPedidos() {
                     Cliente ID: <Text style={styles.valueBold}>{selectedPedido.usuario}</Text>
                   </Text>
                   
-                  <View style={styles.statusRow}>
-                    <Text style={styles.label}>Status: </Text>
-                    <View style={styles.statusBadgeLight}>
-                        <Text style={{color: "#2E7D32", fontWeight: '600'}}>
-                            {selectedPedido.status}
+                  <Text style={styles.label}>Status:</Text>
+                  <View>
+                    {!isSelectingStatus ? (
+                      <TouchableOpacity
+                        style={[
+                          styles.statusOption,
+                          {
+                            backgroundColor: getStatusColor(selectedStatus || ''),
+                            alignSelf: "flex-start",
+                            marginBottom: 12,
+                          },
+                        ]}
+                        onPress={() => setIsSelectingStatus(true)}
+                      >
+                        <Text style={[styles.statusOptionText, { color: "#FFF" }]}>
+                          {selectedStatus
+                            ? selectedStatus.charAt(0).toUpperCase() +
+                              selectedStatus.slice(1)
+                            : "Selecionar Status"}
                         </Text>
-                    </View>
+                      </TouchableOpacity>
+                    ) : (
+                      <View style={styles.statusSelectorContainer}>
+                        {STATUS_CHOICES.map((status) => (
+                          <TouchableOpacity
+                            key={status}
+                            style={[
+                              styles.statusOption,
+                              {
+                                backgroundColor:
+                                  selectedStatus === status
+                                    ? getStatusColor(status)
+                                    : "#f0f0f0",
+                              },
+                            ]}
+                            onPress={() => {
+                              setSelectedStatus(status);
+                              setIsSelectingStatus(false);
+                            }}
+                          >
+                            <Text
+                              style={[
+                                styles.statusOptionText,
+                                {
+                                  color:
+                                    selectedStatus === status ? "#FFF" : "#333",
+                                },
+                              ]}
+                            >
+                              {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    )}
                   </View>
+
 
                   <View style={styles.divider} />
                   <Text style={[styles.modalTitle, { fontSize: 16, marginBottom: 10 }]}>
@@ -206,15 +259,15 @@ export default function MeusPedidos() {
                     style={styles.textArea}
                     multiline={true}
                     numberOfLines={4}
-                    value={observacaoLocal}
-                    onChangeText={setObservacaoLocal}
+                    value={descricao}
+                    onChangeText={setDescricao}
                     placeholder="Ex: Tocar a campainha..."
                   />
                 </ScrollView>
 
                 <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                   <Ionicons name="save-outline" size={20} color="#FFF" style={{ marginRight: 8 }} />
-                  <Text style={styles.saveButtonText}>Salvar (POST)</Text>
+                  <Text style={styles.saveButtonText}>Salvar Alterações</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -243,10 +296,25 @@ const styles = StyleSheet.create({
   modalContent: { width: "90%", backgroundColor: "#FFF", borderRadius: 20, padding: 20, maxHeight: "80%" },
   modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
   modalTitle: { fontSize: 18, fontWeight: "bold", color: "#0D1F3C" },
-  label: { fontSize: 14, color: "#555", marginBottom: 6 },
+  label: { fontSize: 14, color: "#555", marginBottom: 10, fontWeight: '600' },
   valueBold: { fontWeight: "bold", color: "#000" },
-  statusRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  statusBadgeLight: { backgroundColor: "#E8F5E9", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+  statusSelectorContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  statusOption: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  statusOptionText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
   divider: { height: 1, backgroundColor: "#EEE", marginVertical: 12 },
   productRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8, borderBottomWidth: 1, borderBottomColor: '#f0f0f0', paddingBottom: 4 },
   productText: { fontSize: 14, color: "#333" },

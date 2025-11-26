@@ -14,16 +14,34 @@ export interface PedidoGet {
   empresa: number;
   status: string;
   valor_total: string;
+  descricao?: string;
   itens: ItemPedidoGet[];
 }
 
 export type PedidosResponse = PedidoGet[];
 
 
+
+export const STATUS_CHOICES = [
+  "pendente",
+  "processando",
+  "pago",
+  "cancelado",
+  "concluido",
+] as const;
+
+export type StatusPedido = typeof STATUS_CHOICES[number];
+
+export interface PedidoStatusUpdate {
+  status: StatusPedido;
+  descricao?: string;
+}
+
 export interface ItemPedidoPost {
   produto: number;
   quantidade: number;
 }
+
 
 export interface PedidoPost {
   usuario: number;

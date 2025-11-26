@@ -1,5 +1,5 @@
 import { API_AUTH } from './api';
-import { PedidoGet, PedidoPost, PedidosResponse } from '../types/pedidos';
+import { PedidoGet, PedidoPost, PedidosResponse, PedidoStatusUpdate } from '../types/pedidos';
 
 export const pedidoService = {
   
@@ -29,6 +29,16 @@ export const pedidoService = {
       return response.data;
     } catch (error: any) {
       console.error("Erro ao criar pedido:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  updatePedidoStatus: async (id: number, data: PedidoStatusUpdate): Promise<PedidoGet> => {
+    try {
+      const response = await API_AUTH.patch<PedidoGet>(`/pedidos/${id}/atualizar_status_descricao/`, data);
+      return response.data;
+    } catch (error: any) {
+      console.error(`Erro ao atualizar status do pedido ${id}:`, error.response?.data || error.message);
       throw error;
     }
   },
