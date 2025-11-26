@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,19 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator // Import ActivityIndicator for loading state
 } from 'react-native';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../Routes';
 import Header from '../../../components/header/header'; 
 import Buttongeneric from '../../../components/buttons/buttongeneric';
 import CardBase from '../../../components/cards/cardbase';
+import ActivityItem from '../../../components/ActivityItem';
+import { getCarteira, getTransacoes } from '../../../services/moeda';
+import { Carteira, Transacao } from '../../../types/moeda';
 
 const COLORS = {
   primary: '#1E6F2E', // Verde escuro do header/botões
@@ -31,9 +37,34 @@ const COLORS = {
 const { width } = Dimensions.get('window');
 
 const FluxoCaixaScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const [carteira, setCarteira] = useState<Carteira | null>(null);
+  const [transacoes, setTransacoes] = useState<Transacao[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [carteiraData, transacoesData] = await Promise.all([
+          getCarteira(),
+          getTransacoes(),
+        ]);
+        setCarteira(carteiraData);
+        setTransacoes(transacoesData);
+      } catch (err: any) {
+        setError(err.message || 'Erro ao carregar dados.');
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleBack = () => navigation.goBack();
-  const handleExtrato = () => console.log('Ver Extrato');
+  const handleExtrato = () => navigation.navigate('EXTRATO');
   const handleCopyPix = () => console.log('Copiar Pix');
 
   return (
@@ -45,10 +76,22 @@ const FluxoCaixaScreen: React.FC = () => {
         onBackPress={handleBack} 
       />
 
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Carregando dados da carteira...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Ionicons name="warning-outline" size={32} color={COLORS.red} />
+          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.errorTip}>Tente novamente mais tarde.</Text>
+        </View>
+      ) : (
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
 
         {/* 2. Saldo em Reais */}
         <CardBase style={styles.cardSpacing}>
@@ -58,7 +101,7 @@ const FluxoCaixaScreen: React.FC = () => {
               <Text style={styles.cardTitle}> Saldo em Reais (R$)</Text>
             </View>
             <Text style={styles.labelSmall}>Você tem:</Text>
-            <Text style={styles.valueLarge}>R$ 550,00</Text>
+            <Text style={styles.valueLarge}>R$ {carteira?.saldo_dinheiro ? parseFloat(carteira.saldo_dinheiro).toFixed(2).replace('.', ',') : '0,00'}</Text>
           </View>
         </CardBase>
 
@@ -77,7 +120,7 @@ const FluxoCaixaScreen: React.FC = () => {
               <FontAwesome5 name="coins" size={32} color={COLORS.secondary} style={{ marginRight: 10 }} />
               <View>
                 <Text style={styles.labelSmall}>Você tem:</Text>
-                <Text style={styles.valueLarge}>154 Moedas</Text>
+                <Text style={styles.valueLarge}>{carteira?.saldo_moeda ? parseInt(carteira.saldo_moeda).toLocaleString('pt-BR') : '0'} Moedas</Text>
               </View>
             </View>
           </View>
@@ -93,41 +136,20 @@ const FluxoCaixaScreen: React.FC = () => {
 
             {/* Lista de Atividades */}
             <View style={styles.activityList}>
-              <ActivityItem 
-                title="Compra de Ingredientes" 
-                date="03/07/2025" 
-                value="- R$ 120,00" 
-                color={COLORS.red} 
-                barColor={COLORS.red}
-              />
-              <ActivityItem 
-                title="Promover Campanha" 
-                date="02/07/2025" 
-                value="- 100 Moedas" 
-                color={COLORS.secondary} 
-                barColor={COLORS.secondary}
-              />
-              <ActivityItem 
-                title="Venda de Bolos" 
-                date="02/07/2025" 
-                value="+ R$ 60,00" 
-                color={COLORS.greenValid} 
-                barColor={COLORS.greenValid}
-              />
-              <ActivityItem 
-                title="Bônus Diário" 
-                date="02/07/2025" 
-                value="+ 1 Moedas" 
-                color={COLORS.secondary} 
-                barColor={COLORS.secondary}
-              />
-              <ActivityItem 
-                title="Venda de Brigadeiros" 
-                date="01/07/2025" 
-                value="+ R$ 85,50" 
-                color={COLORS.greenValid} 
-                barColor={COLORS.greenValid}
-              />
+              {transacoes.length > 0 ? (
+                transacoes.slice(0, 5).map((transacao) => (
+                  <ActivityItem 
+                    key={transacao.id}
+                    title={transacao.tipo_operacao} 
+                    date={new Date(transacao.created_at).toLocaleDateString('pt-BR')} 
+                    value={`${transacao.valor_movimentado.startsWith('-') ? '-' : '+'} ${transacao.tipo_ativo === 'BRL' ? 'R$' : ''} ${parseFloat(transacao.valor).toFixed(2).replace('.', ',')} ${transacao.tipo_ativo === 'COIN' ? 'Moedas' : ''}`}
+                    color={transacao.valor_movimentado.startsWith('-') ? COLORS.red : COLORS.greenValid} 
+                    barColor={transacao.valor_movimentado.startsWith('-') ? COLORS.red : COLORS.greenValid}
+                  />
+                ))
+              ) : (
+                <Text style={styles.noActivityText}>Nenhuma atividade recente encontrada.</Text>
+              )}
             </View>
 
             {/* Botão Ver Extrato (Seu Componente) */}
@@ -219,23 +241,13 @@ const FluxoCaixaScreen: React.FC = () => {
           </View>
         </CardBase>
 
-      </ScrollView>
-      
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
 
 // --- SUB-COMPONENTES AUXILIARES (Para manter o arquivo organizado) ---
-
-const ActivityItem = ({ title, date, value, color, barColor }: any) => (
-  <View style={[styles.activityItem, { borderLeftColor: barColor }]}>
-    <View>
-      <Text style={styles.activityTitle}>{title}</Text>
-      <Text style={styles.activityDate}>{date}</Text>
-    </View>
-    <Text style={[styles.activityValue, { color: color }]}>{value}</Text>
-  </View>
-);
 
 const BulletPoint = ({ title, text }: any) => (
   <View style={styles.bulletRow}>
@@ -294,37 +306,6 @@ const styles = StyleSheet.create({
   // Atividade Recente Styles
   activityList: {
     marginTop: 10,
-  },
-  activityItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
-    borderLeftWidth: 4, // A barrinha colorida lateral
-    paddingLeft: 10,
-    marginBottom: 8,
-    backgroundColor: '#FFF',
-    borderRadius: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  activityTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: COLORS.textDark,
-  },
-  activityDate: {
-    fontSize: 12,
-    color: '#999',
-  },
-  activityValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   // Entradas Styles
   descriptionText: {
@@ -434,6 +415,42 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: COLORS.textGray,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: COLORS.background,
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: COLORS.red,
+    textAlign: 'center',
+  },
+  errorTip: {
+    fontSize: 14,
+    color: COLORS.textGray,
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  noActivityText: {
+    fontSize: 14,
+    color: COLORS.textGray,
+    textAlign: 'center',
+    paddingVertical: 20,
   }
 });
 

@@ -5,6 +5,7 @@ import Createproduto from "../../views/home/produtos/createproduto";
 import {AuthStackParamList} from "../../Routes";
 import FluxoCaixaScreen from "../../views/home/moeda/caixa";
 import MeusPedidos from "../../views/home/pedidos/pedidos";
+import ExtratoScreen from "../../views/home/moeda/ExtratoScreen";
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -16,6 +17,7 @@ export default function HomeStack() {
       <Stack.Screen name="CREATEPRODUTO" component={Createproduto} />
       <Stack.Screen name="CAIXA" component={FluxoCaixaScreen} />
       <Stack.Screen name="PEDIDOS" component={MeusPedidos} />
+      <Stack.Screen name="EXTRATO" component={ExtratoScreen} />
     </Stack.Navigator>
   );
 }
