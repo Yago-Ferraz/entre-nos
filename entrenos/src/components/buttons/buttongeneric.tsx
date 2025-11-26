@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  View,
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
   ActivityIndicator,
   StyleProp,
   ViewStyle,
   TextStyle,
-  DimensionValue,
 } from 'react-native';
-import { cor_primaria, cor_secundaria, typography } from '../../global';
+import { cor_primaria, typography } from '../../global';
 
 interface CustomButtonProps {
   title: string;
@@ -39,31 +38,23 @@ const Buttongeneric: React.FC<CustomButtonProps> = ({
 }) => {
   const [isPressed, setIsPressed] = useState(false);
 
-  // Define as cores dinamicamente
   const backgroundColor = invertido
-    ? isPressed
-      ? cor_primaria
-      : '#FFFFFF'
-    : isPressed
-    ? '#1E6F2E' // tom mais escuro ao clicar
-    : cor_primaria;
+    ? isPressed ? cor_primaria : '#FFFFFF'
+    : isPressed ? '#1E6F2E' : cor_primaria;
 
   const textColor = invertido
-    ? isPressed
-      ? '#FFFFFF'
-      : cor_primaria
+    ? isPressed ? '#FFFFFF' : cor_primaria
     : '#FFFFFF';
 
-  // Estilo base com sombra
   const getButtonStyles = (): StyleProp<ViewStyle> => [
-    styles.buttonContainer,
+    buttonGenericStyles.buttonContainer,
     {
       backgroundColor,
       width,
       opacity: disabled || loading ? 0.6 : 1,
       shadowOpacity: isPressed ? 0.25 : 0.15,
       shadowRadius: isPressed ? 8 : 6,
-      elevation: isPressed ? 5 : 3, // Android
+      elevation: isPressed ? 5 : 3,
     },
     style,
   ];
@@ -79,8 +70,8 @@ const Buttongeneric: React.FC<CustomButtonProps> = ({
       {loading ? (
         <ActivityIndicator color={textColor} />
       ) : (
-        <View style={styles.contentContainer}>
-          {leftIcon && <View style={styles.iconContainer}>{leftIcon}</View>}
+        <View style={buttonGenericStyles.contentContainer}>
+          {leftIcon && <View style={buttonGenericStyles.iconContainer}>{leftIcon}</View>}
           <Text style={[typography.button, { color: textColor }, textStyle]}>
             {title}
           </Text>
@@ -90,20 +81,20 @@ const Buttongeneric: React.FC<CustomButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const buttonGenericStyles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    marginVertical: 8,
+    paddingVertical: 10, // Ajustado para ficar mais compacto como no card
+    paddingHorizontal: 16,
+    borderRadius: 20, // Mais arredondado como na imagem
+    marginVertical: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
     shadowRadius: 6,
-    elevation: 3, // Android sombra
+    elevation: 3,
   },
   contentContainer: {
     flexDirection: 'row',

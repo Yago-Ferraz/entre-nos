@@ -9,4 +9,7 @@ export type AuthStackParamList = {
   CREATEPRODUTO: { produto: Produto } | undefined;
 };
 
-
+export type LojaStackParamList = {
+  TelaLoja: undefined;
+  TelaProduto: { productId: number };
+};
