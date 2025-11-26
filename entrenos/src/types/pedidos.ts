@@ -10,7 +10,7 @@ export interface ItemPedidoGet {
 
 export interface PedidoGet {
   id: number;
-  usuario: number;
+  comprador: string;
   empresa: number;
   status: string;
   valor_total: string;

@@ -116,7 +116,9 @@ export default function MeusPedidos() {
           data={pedidos}
           style={{ marginTop: 10, width: "100%" }}
           keyExtractor={(item) => String(item.id)}
+          
           renderItem={({ item }: { item: PedidoGet }) => (
+            console.log(item),
             <CardBase onPress={() => handleOpenModal(item)} style={styles.card}>
               <View style={styles.row}>
                 <Image 
@@ -125,7 +127,8 @@ export default function MeusPedidos() {
                 />
 
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.name}>Pedido #{item.id}</Text>
+                  
+                  <Text style={styles.name}>Pedido {item.comprador}</Text>
                   <Text style={styles.produto}>
                      {item.itens.length} ite{item.itens.length > 1 ? 'ns' : 'm'}
                   </Text>
@@ -164,7 +167,7 @@ export default function MeusPedidos() {
 
                 <ScrollView showsVerticalScrollIndicator={false}>
                   <Text style={styles.label}>
-                    Cliente ID: <Text style={styles.valueBold}>{selectedPedido.usuario}</Text>
+                    Cliente: <Text style={styles.valueBold}>{selectedPedido.comprador}</Text>
                   </Text>
                   
                   <Text style={styles.label}>Status:</Text>
