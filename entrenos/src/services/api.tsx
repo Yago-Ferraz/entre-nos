@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
 import { onLogoutCallback } from "../AuthContext"; // Import the logout callback
 
+
 export const baseurl= 'http://192.168.58.179:8003'
 
 // 1. API pública (ex: criar usuário, login)
