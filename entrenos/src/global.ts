@@ -6,9 +6,7 @@ export const cor_secundaria = '#021757'
 export const cor_terciaria = '#FFA629'
 export const cor_backgroud = '#F8F8F8'
 export const cinza = '#868686'
-
-
-
+export const cor_vermelho = '#E00000'
 
 
 export const FONT_FAMILY = {
@@ -67,5 +65,27 @@ export const typography = StyleSheet.create({
   p:{
     fontFamily: FONT_FAMILY.JOST_REGULAR,
     fontSize: FONT_SIZE.SM,
+  },
+  // SalesGoalCard specific styles
+  cardHeader: {
+    fontFamily: FONT_FAMILY.JOST_BOLD,
+    fontSize: FONT_SIZE.MD * 1.125, // Approximately 18, trying to fit between MD and LG
+  },
+  cardMainValue: {
+    fontFamily: FONT_FAMILY.JOST_BOLD,
+    fontSize: FONT_SIZE.XL * 1.16, // Approximately 28, trying to fit between XL and XXL
+  },
+  cardSubValue: {
+    fontFamily: FONT_FAMILY.JOST_BOLD,
+    fontSize: FONT_SIZE.MD * 1.125, // Approximately 18
+  },
+  cardLabel: {
+    fontFamily: FONT_FAMILY.JOST_REGULAR,
+    fontSize: FONT_SIZE.XS,
+  },
+  cardFooter: {
+    fontFamily: FONT_FAMILY.JOST_SEMIBOLD,
+    fontSize: FONT_SIZE.XS,
+    fontWeight: '600', // Explicitly keep fontWeight if it's a specific requirement
   }
 });

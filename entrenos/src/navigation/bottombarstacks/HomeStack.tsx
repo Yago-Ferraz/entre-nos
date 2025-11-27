@@ -2,16 +2,24 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../../views/home/HomeScreen";
 import ProdutoScreem from "../../views/home/produtos/viewproduto";
 import Createproduto from "../../views/home/produtos/createproduto";
+import { HomeStackParamList } from "../../types/navigationTypes"; // Corrected import path
+import FluxoCaixaScreen from "../../views/home/moeda/caixa";
+import MeusPedidos from "../../views/home/pedidos/pedidos";
+import ExtratoScreen from "../../views/home/moeda/ExtratoScreen";
+import BIScreen from "../../views/home/BI";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 export default function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomeMain" component={HomeScreen} />
-      <Stack.Screen name="ProdutoScreem" component={ProdutoScreem} />
-      <Stack.Screen name="Createproduto" component={Createproduto} />
-
+      <Stack.Screen name="HomeInitial" component={HomeScreen} />
+      <Stack.Screen name="PRODUTOSCREEM" component={ProdutoScreem} />
+      <Stack.Screen name="CREATEPRODUTO" component={Createproduto} />
+      <Stack.Screen name="CAIXA" component={FluxoCaixaScreen} />
+      <Stack.Screen name="PEDIDOS" component={MeusPedidos} />
+      <Stack.Screen name="EXTRATO" component={ExtratoScreen} />
+      <Stack.Screen name="BI" component={BIScreen} />
     </Stack.Navigator>
   );
 }

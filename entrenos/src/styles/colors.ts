@@ -12,4 +12,9 @@ export const colors = {
   // Cores do onboarding
   onboardingGreen: '#2e7d32',
   onboardingNavy: '#1a237e',
+  // Cores para SalesGoalCard
+  whiteTransparent20: 'rgba(255, 255, 255, 0.2)',
+  whiteTransparent70: 'rgba(255, 255, 255, 0.7)',
+  blackTransparent20: 'rgba(0, 0, 0, 0.2)',
+  orangeAccent: '#FFAB00',
 };
