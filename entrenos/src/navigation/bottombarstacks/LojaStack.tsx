@@ -1,17 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "../../views/home/HomeScreen";
-import ProdutoScreem from "../../views/home/produtos/viewproduto";
-import Createproduto from "../../views/home/produtos/createproduto";
+import LojaScreen from "../../views/loja/TelaLoja";
+import ProductDetailScreen from "../../views/loja/TelaProduto";
 
 const Stack = createNativeStackNavigator();
 
 export default function Lojastack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomeMain" component={HomeScreen} />
-      <Stack.Screen name="ProdutoScreem" component={ProdutoScreem} />
-      <Stack.Screen name="Createproduto" component={Createproduto} />
-
+      <Stack.Screen name="TelaLoja" component={LojaScreen} />
+      <Stack.Screen name="TelaProduto" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
 }

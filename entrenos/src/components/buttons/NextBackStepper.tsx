@@ -1,25 +1,15 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions
-} from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import {typography} from '@/src/global'
-
-const { width, height } = Dimensions.get('window');
-
+import { typography } from '@/src/global';
 
 type StepperProps = {
   value: number;
-  onChange: (newValue: number) => void; // Callback que recebe um número e não retorna nada
+  onChange: (newValue: number) => void;
+  scale?: number; // Optional scale prop
 };
 
-const Stepper:React.FC<StepperProps> = ({ value, onChange }) => {
-  
-
+const Stepper: React.FC<StepperProps> = ({ value, onChange, scale = 1 }) => {
   const handleIncrement = () => {
     onChange(value + 1);
   };
@@ -29,33 +19,71 @@ const Stepper:React.FC<StepperProps> = ({ value, onChange }) => {
     onChange(value > 0 ? value - 1 : 0);
   };
 
+  // Dynamic styles based on scale
+  const dynamicStyles = {
+    container: {
+      borderRadius: 8 * scale,
+    },
+    buttonBase: {
+      paddingVertical: 10 * scale,
+      paddingHorizontal: 20 * scale,
+    },
+    buttonText: {
+      fontSize: 24 * scale,
+      lineHeight: 26 * scale,
+    },
+    buttonLeft: {
+      borderTopLeftRadius: 7 * scale,
+      borderBottomLeftRadius: 7 * scale,
+    },
+    buttonRight: {
+      borderTopRightRadius: 7 * scale,
+      borderBottomRightRadius: 7 * scale,
+    },
+    valueContainer: {
+      paddingVertical: 10 * scale,
+      paddingHorizontal: 30 * scale,
+    },
+    valueText: {
+      fontSize: typography.h3.fontSize * scale,
+    },
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       {/* Botão de Decrementar (-) */}
       <TouchableOpacity
         onPress={handleDecrement}
-        style={[styles.buttonBase, styles.buttonLeft]}
+        style={[
+          styles.buttonBase,
+          dynamicStyles.buttonBase,
+          styles.buttonLeft,
+          dynamicStyles.buttonLeft,
+        ]}
       >
-        <Text style={styles.buttonText}>-</Text>
+        <Text style={[styles.buttonText, dynamicStyles.buttonText]}>-</Text>
       </TouchableOpacity>
 
       {/* Visor do Valor */}
-      <View style={styles.valueContainer}>
-        <Text style={styles.valueText}>{value}</Text>
+      <View style={[styles.valueContainer, dynamicStyles.valueContainer]}>
+        <Text style={[styles.valueText, dynamicStyles.valueText]}>{value}</Text>
       </View>
 
       {/* Botão de Incrementar (+) */}
       <TouchableOpacity
         onPress={handleIncrement}
-        style={[styles.buttonBase, styles.buttonRight]}
+        style={[
+          styles.buttonBase,
+          dynamicStyles.buttonBase,
+          styles.buttonRight,
+          dynamicStyles.buttonRight,
+        ]}
       >
-        <Text style={styles.buttonText}>+</Text>
+        <Text style={[styles.buttonText, dynamicStyles.buttonText]}>+</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   appContainer: {
@@ -64,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   title: {
-    ... typography ,
+    ...typography,
     marginBottom: 20,
   },
   // Estilos do componente Stepper
@@ -74,9 +102,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#000000ff', // Verde escuro para a borda
-    borderRadius: 8,        // Cantos arredondados
-    overflow: 'hidden',     // Garante que os filhos não "vazem" dos cantos
-     alignSelf: 'flex-start'
+    borderRadius: 8, // Cantos arredondados
+    overflow: 'hidden', // Garante que os filhos não "vazem" dos cantos
+    alignSelf: 'flex-start',
   },
   buttonBase: {
     backgroundColor: '#008000', // Verde
@@ -111,7 +139,7 @@ const styles = StyleSheet.create({
     borderColor: '#006400', // Mesma cor da borda externa
   },
   valueText: {
-    ... typography.h3,
+    ...typography.h3,
     color: '#333333', // Texto preto/cinza escuro
   },
 });

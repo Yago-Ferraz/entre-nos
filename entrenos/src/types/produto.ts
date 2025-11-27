@@ -21,3 +21,30 @@ export type Produto = {
     imagem: string;
   };
 };
+
+export type UpsellProduto = {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    imagem: string;
+    nome: string;
+    descricao: string;
+    preco: string;
+    quantidade: number;
+    created_by: number;
+    updated_by: number;
+};
+
+export type ProdutoDetalhado = {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    created_by: number;
+    updated_by: number;
+    imagem: string;
+    nome: string;
+    descricao: string;
+    preco: string;
+    quantidade: number;
+    upsell_produtos: UpsellProduto[];
+};

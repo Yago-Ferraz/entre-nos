@@ -9,7 +9,9 @@ export const ROUTES = {
   PRODUTOSCREEM: 'PRODUTOSCREEM',
   CREATEPRODUTO: 'CREATEPRODUTO',
   CAIXA: 'CAIXA',
-  PEDIDOS: 'PEDIDOS'
+  PEDIDOS: 'PEDIDOS',
+  EXTRATO: 'EXTRATO',
+  BI: 'BI'
 } as const;
 
 
@@ -24,4 +26,6 @@ export type AuthStackParamList = {
   CREATEPRODUTO: { produto: Produto } | undefined;
   CAIXA: undefined,
   PEDIDOS: undefined,
+  EXTRATO: undefined,
+  BI: undefined,
 };
