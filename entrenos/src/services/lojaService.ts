@@ -1,5 +1,6 @@
 import { API_AUTH } from './api';
 import { FormDataCadastroLojaType } from '../types/cadastro/cadastro';
+import { DashboardStats } from '../types/loja';
 
 export const createLoja = async (loja: FormDataCadastroLojaType, userId: number) => {
   try {
@@ -32,6 +33,60 @@ export const createLoja = async (loja: FormDataCadastroLojaType, userId: number)
     return response.data;
   } catch (error: any) {
     console.error('Erro ao criar loja:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getDashboardStats = async (): Promise<DashboardStats> => {
+  try {
+    const response = await API_AUTH.get('/empresa/dashboard-stats/');
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao buscar estatísticas do dashboard:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getEmpresaStats = async () => {
+  try {
+    const response = await API_AUTH.get('/empresa/stats/');
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao buscar estatísticas da empresa:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const updateMeta = async (meta: number) => {
+  try {
+    const response = await API_AUTH.post('/empresa/meta/', { meta }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao atualizar a meta:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getMeta = async () => {
+  try {
+    const response = await API_AUTH.get('/empresa/meta/');
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao buscar a meta:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getDashboard = async () => {
+  try {
+    const response = await API_AUTH.get('/empresa/dashboard/');
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao buscar dados do dashboard:', error.response?.data || error.message);
     throw error;
   }
 };

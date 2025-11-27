@@ -1,37 +1,60 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import CardBase from './cardbase'; // Ajuste o caminho conforme sua estrutura
-import { 
-  typography, 
-  cor_secundaria, 
-  cor_terciaria, 
-  cinza, 
-  FONT_SIZE, 
-  FONT_FAMILY 
-} from '@/src/global'; // Ajuste o caminho da importação
+import CardBase from './cardbase';
+import {
+  typography,
+  cor_secundaria,
+  cor_terciaria,
+  cinza,
+} from '@/src/global';
+import { DashboardStats } from '../../types/loja'; // Adjust path
 
 interface PerformanceCardProps {
-  vendasSemana: number;
-  variacaoSemana: string; // ex: "-11%"
-  produtoMaisVendido: string;
-  porcentagemProduto: string; // ex: "80%"
-  mediaDiaria: number;
+  dashboardStats: DashboardStats | null;
+  loading: boolean;
+  error: string | null;
   onPress?: () => void;
 }
 
 const PerformanceCard: React.FC<PerformanceCardProps> = ({
-  vendasSemana,
-  variacaoSemana,
-  produtoMaisVendido,
-  porcentagemProduto,
-  mediaDiaria,
+  dashboardStats,
+  loading,
+  error,
   onPress
 }) => {
-
-  const formatCurrency = (value: number) => {
-    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const formatCurrency = (value: string | number) => {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(numValue)) {
+      return 'N/A';
+    }
+    return numValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
+
+  if (loading) {
+    return (
+      <CardBase style={styles.container} width="100%">
+        <ActivityIndicator size="large" color={cor_secundaria} />
+        <Text style={styles.loadingText}>Carregando dados...</Text>
+      </CardBase>
+    );
+  }
+
+  if (error) {
+    return (
+      <CardBase style={styles.container} width="100%">
+        <Text style={styles.errorText}>Erro: {error}</Text>
+      </CardBase>
+    );
+  }
+
+  if (!dashboardStats) {
+    return (
+      <CardBase style={styles.container} width="100%">
+        <Text style={styles.errorText}>Nenhum dado disponível.</Text>
+      </CardBase>
+    );
+  }
 
   return (
     <CardBase 
@@ -58,22 +81,22 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({
         {/* Coluna 1: Vendas */}
         <View style={styles.column}>
           <Text style={styles.label}>Vendas da Semana:</Text>
-          <Text style={styles.value}>{vendasSemana} Vendas</Text>
-          <Text style={styles.subText}>{variacaoSemana} semana passada</Text>
+          <Text style={styles.value}>{dashboardStats.vendas_semana.total_vendas}</Text>
+          <Text style={styles.subText}>{dashboardStats.vendas_semana.percentual_variacao}% semana passada</Text>
         </View>
 
         {/* Coluna 2: Produto */}
         <View style={styles.column}>
           <Text style={styles.label}>Mais Vendido:</Text>
-          <Text style={styles.value} numberOfLines={1}>{produtoMaisVendido}</Text>
-          <Text style={styles.subText}>{porcentagemProduto} das vendas</Text>
+          <Text style={styles.value} numberOfLines={1}>{dashboardStats.produto_mais_vendido.nome}</Text>
+          <Text style={styles.subText}>{dashboardStats.produto_mais_vendido.porcentagem_total}% das vendas</Text>
         </View>
 
         {/* Coluna 3: Média */}
         <View style={styles.column}>
           <Text style={styles.label}>Média Diária:</Text>
-          <Text style={styles.value}>{formatCurrency(mediaDiaria)}</Text>
-          <Text style={styles.subText}>por dia esta semana</Text>
+          <Text style={styles.value}>{formatCurrency(dashboardStats.media_diaria_semana.valor_medio_diario)}</Text>
+          <Text style={styles.subText}>{dashboardStats.media_diaria_semana.periodo_referencia}</Text>
         </View>
 
       </View>
@@ -114,6 +137,7 @@ const styles = StyleSheet.create({
   column: {
     flex: 1, // Distribui o espaço igualmente
     paddingRight: 4, // Pequeno respiro entre colunas
+    alignItems: 'center',
   },
   // Sobrescrevendo estilos globais para ajuste fino conforme a imagem
   label: {
@@ -129,6 +153,7 @@ const styles = StyleSheet.create({
   subText: {
     ...typography.cardLabel, // Reutilizando o estilo de label para consistência
     color: cinza,
+    textAlign: 'center',
   },
   footer: {
     flexDirection: 'row',
@@ -138,7 +163,19 @@ const styles = StyleSheet.create({
   footerText: {
     ...typography.p, // Usando o estilo de parágrafo padrão
     color: cor_secundaria,
-  }
+  },
+  loadingText: {
+    ...typography.p,
+    textAlign: 'center',
+    marginTop: 10,
+    color: cor_secundaria,
+  },
+  errorText: {
+    ...typography.p,
+    textAlign: 'center',
+    marginTop: 10,
+    color: 'red',
+  },
 });
 
 export default PerformanceCard;
