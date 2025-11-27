@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
 import { onLogoutCallback } from "../AuthContext"; // Import the logout callback
 
-export const baseurl= 'http://192.168.1.64:8003'
+export const baseurl= 'http://192.168.58.179:8003'
 
 // 1. API pública (ex: criar usuário, login)
 export const API_PUBLIC = axios.create({
@@ -10,6 +10,7 @@ export const API_PUBLIC = axios.create({
   headers: {
     'Content-Type': 'multipart/form-data',
   },
+  timeout: 2000,
 });
 
 // 2. API autenticada (envia token automaticamente)
@@ -18,6 +19,7 @@ export const API_AUTH = axios.create({
   headers: {
     'Content-Type': 'multipart/form-data',
   },
+  timeout: 2000,
 });
 
 API_AUTH.interceptors.request.use(async (config) => {

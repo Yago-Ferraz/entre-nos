@@ -1,6 +1,6 @@
 import { API_AUTH } from './api';
 import { FormDataCadastroLojaType } from '../types/cadastro/cadastro';
-import { DashboardStats } from '../types/loja';
+import { DashboardStats, WeeklyDashboardSummaryResponse, LojaDetails } from '../types/loja';
 
 export const createLoja = async (loja: FormDataCadastroLojaType, userId: number) => {
   try {
@@ -90,3 +90,24 @@ export const getDashboard = async () => {
     throw error;
   }
 };
+
+export const getWeeklyDashboardSummary = async (): Promise<WeeklyDashboardSummaryResponse> => {
+  try {
+    const response = await API_AUTH.get('/empresa/weekly-dashboard-summary/');
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao buscar o resumo semanal do dashboard:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getLojaDetails = async (lojaId: number): Promise<LojaDetails> => {
+  try {
+    const response = await API_AUTH.get(`loja/empresa/me/`);
+    return response.data;
+  } catch (error: any) {
+    console.error('Erro ao buscar detalhes da loja:', error.response?.data || error.message);
+    throw error;
+  }
+};
+

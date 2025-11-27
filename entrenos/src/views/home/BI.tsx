@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -7,7 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
-  ViewToken
+  ViewToken,
+  ActivityIndicator // Added for loading indicator
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -29,42 +30,77 @@ import {
   FONT_SIZE,
 } from '@/src/global';
 
+// --- SERVIÇOS E TIPOS ---
+import { getWeeklyDashboardSummary } from '@/src/services/lojaService';
+import { WeeklyDashboardSummaryResponse } from '@/src/types/loja';
+import { BIScreenNavigationProp } from '@/src/types/navigationTypes'; // Assuming BIScreenNavigationProp is in loja.ts or navigationTypes.ts
+
+interface Achievement {
+  key: string;
+  title: string;
+  iconName: keyof typeof MaterialCommunityIcons.glyphMap; // Type for icon names
+  condition: (data: WeeklyDashboardSummaryResponse | null, totalSalesNum: number, weeklyGoalMet: boolean) => boolean;
+  unlockedColor: string;
+  lockedColor: string;
+}
+
 const { width: screenWidth } = Dimensions.get('window');
 
-// --- DADOS DO CARROSSEL ---
-const DICAS_DATA = [
-  { id: '1', text: "Seus brigadeiros são um sucesso! Que tal criar um 'Kit Degustação' com ele e um novo sabor para impulsionar as vendas?" },
-  { id: '2', text: "Aproveite datas comemorativas para criar embalagens temáticas e aumentar o valor agregado dos seus produtos." },
-  { id: '3', text: "Peça feedback aos seus clientes mais fiéis e use os depoimentos nas suas redes sociais para gerar confiança." },
-];
-
 const BIScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BIScreenNavigationProp>();
   
+  const [dashboardData, setDashboardData] = useState<WeeklyDashboardSummaryResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   // --- CARROSSEL LOGIC ---
   const [activeTipIndex, setActiveTipIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const cardContentWidth = screenWidth - 32 - 24;
 
   const scrollToIndex = (index: number) => {
-    flatListRef.current?.scrollToIndex({ animated: true, index: index });
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ animated: true, index: index });
+    }
   };
+
+  useEffect(() => {
+    const fetchDashboardSummary = async () => {
+      try {
+        setLoading(true);
+        const data = await getWeeklyDashboardSummary();
+        setDashboardData(data);
+      } catch (err: any) {
+        setError('Erro ao carregar o resumo do dashboard: ' + (err.message || 'Erro desconhecido'));
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardSummary();
+  }, []);
+
   const handlePrevTip = () => { if (activeTipIndex > 0) scrollToIndex(activeTipIndex - 1); };
-  const handleNextTip = () => { if (activeTipIndex < DICAS_DATA.length - 1) scrollToIndex(activeTipIndex + 1); };
+  const handleNextTip = () => {
+    if (dashboardData?.frases_dra_clara && activeTipIndex < dashboardData.frases_dra_clara.length - 1) {
+      scrollToIndex(activeTipIndex + 1);
+    }
+  };
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     if (viewableItems.length > 0 && viewableItems[0].index !== null) setActiveTipIndex(viewableItems[0].index);
   }, []);
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
-  const renderCarouselItem = ({ item, index }: { item: typeof DICAS_DATA[0], index: number }) => {
+  const renderCarouselItem = ({ item, index }: { item: string, index: number }) => {
     const isFirst = index === 0;
-    const isLast = index === DICAS_DATA.length - 1;
+    const isLast = !!(dashboardData && index === dashboardData.frases_dra_clara.length - 1);
     return (
       <View style={[styles.carouselItemContainer, { width: cardContentWidth }]}>
         <TouchableOpacity style={styles.arrowButton} onPress={handlePrevTip} disabled={isFirst}>
            <MaterialCommunityIcons name="chevron-left" size={28} color={isFirst ? cinza : cor_secundaria} />
         </TouchableOpacity>
-        <Text style={styles.tipText}>{item.text}</Text>
+        <Text style={styles.tipText}>{item}</Text>
         <TouchableOpacity style={styles.arrowButton} onPress={handleNextTip} disabled={isLast}>
            <MaterialCommunityIcons name="chevron-right" size={28} color={isLast ? cinza : cor_secundaria} />
         </TouchableOpacity>
@@ -72,13 +108,73 @@ const BIScreen: React.FC = () => {
     );
   };
 
-  // Dados Mockados
-  const resumo = {
-    totalVendas: 'R$ 1250,00',
-    crescimento: '15%',
-    produtoMaisVendido: 'Brigadeiro',
-    metaPorcentagem: 85,
-  };
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={cor_primaria} />
+        <Text style={styles.loadingText}>Carregando dados...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <MaterialCommunityIcons name="alert-circle-outline" size={50} color="red" />
+        <Text style={styles.errorText}>{error}</Text>
+        <Buttongeneric 
+          title="Tentar Novamente"
+          onPress={() => navigation.replace('BI')} // Simple retry by re-mounting the component
+          variant="primary"
+          style={{ backgroundColor: cor_primaria, marginTop: 20 }}
+        />
+      </View>
+    );
+  }
+
+  if (!dashboardData) {
+    return (
+      <View style={styles.errorContainer}>
+        <MaterialCommunityIcons name="information-outline" size={50} color={cinza} />
+        <Text style={styles.errorText}>Nenhum dado encontrado para o dashboard.</Text>
+      </View>
+    );
+  }
+
+  // Calculate metaPorcentagem
+  const totalVendaSemanaNum = parseFloat(dashboardData.total_venda_semana.replace(',', '.'));
+  const metaSemanalNum = dashboardData.meta_semanal;
+  const metaPorcentagem = metaSemanalNum > 0 ? Math.min(100, Math.round((totalVendaSemanaNum / metaSemanalNum) * 100)) : 0;
+
+  const weeklyGoalMet = metaPorcentagem >= 100;
+
+  const achievements: Achievement[] = [
+    {
+      key: 'weekly_goal_achieved',
+      title: 'Meta Semanal Concluída!',
+      iconName: 'trophy',
+      condition: (_, __, weeklyGoalMet) => weeklyGoalMet,
+      unlockedColor: cor_primaria, // Green
+      lockedColor: cinza, // Gray
+    },
+    {
+      key: 'first_sale',
+      title: 'Primeira Venda!',
+      iconName: 'cash-multiple',
+      condition: (data, totalSalesNum) => totalSalesNum > 0 && data !== null, // Ensure data is not null
+      unlockedColor: cor_secundaria, // Blue
+      lockedColor: cinza,
+    },
+    {
+      key: 'top_product_sold',
+      title: 'Produto em Destaque!',
+      iconName: 'star-circle',
+      condition: (data) => data !== null && !!data.produto_mais_vendido_semana.nome, // Ensure data is not null
+      unlockedColor: cor_terciaria, // Orange
+      lockedColor: cinza,
+    },
+    // Add more achievements here as needed
+  ];
 
   return (
     <View style={styles.container}>
@@ -94,17 +190,17 @@ const BIScreen: React.FC = () => {
 
         <CardBase style={styles.summaryCard}>
           <MaterialCommunityIcons name="chart-line-variant" size={40} color={cor_primaria} style={{ marginBottom: 8 }} />
-          <Text style={styles.bigValue}>{resumo.totalVendas}</Text>
+          <Text style={styles.bigValue}>R$ {dashboardData.total_venda_semana.replace('.', ',')}</Text>
           <Text style={styles.label}>Total de Vendas</Text>
           <View style={styles.indicatorContainer}>
             <MaterialCommunityIcons name="arrow-up" size={16} color={cor_primaria} />
-            <Text style={styles.indicatorText}>{resumo.crescimento}</Text>
+            <Text style={styles.indicatorText}>N/A</Text> 
           </View>
         </CardBase>
 
         <CardBase style={styles.summaryCard}>
           <MaterialCommunityIcons name="package-variant-closed" size={40} color={cor_terciaria} style={{ marginBottom: 8 }} />
-          <Text style={styles.bigValue}>{resumo.produtoMaisVendido}</Text>
+          <Text style={styles.bigValue}>{dashboardData.produto_mais_vendido_semana.nome}</Text>
           <Text style={styles.label}>Produto Mais Vendido</Text>
           <View style={styles.indicatorContainer}>
              <MaterialCommunityIcons name="star" size={16} color={cor_primaria} />
@@ -116,15 +212,15 @@ const BIScreen: React.FC = () => {
           <View style={styles.checkCircle}>
              <MaterialCommunityIcons name="check" size={24} color="#FFF" />
           </View>
-          <Text style={styles.bigValue}>{resumo.metaPorcentagem}%</Text>
+          <Text style={styles.bigValue}>{metaPorcentagem}%</Text>
           <Text style={styles.label}>Meta Semanal</Text>
           <View style={styles.progressBarBackground}>
-             <View style={[styles.progressBarFill, { width: `${resumo.metaPorcentagem}%` }]} />
+             <View style={[styles.progressBarFill, { width: `${metaPorcentagem}%` }]} />
           </View>
         </CardBase>
 
         <Text style={styles.congratsText}>
-          Parabéns, Ana! Você vendeu 12% em relação a semana passada isso significa 30 doces a mais! 🎉
+          Parabéns! Sua meta semanal é de R$ {dashboardData.meta_semanal.toFixed(2).replace('.', ',')} e você já atingiu R$ {dashboardData.total_venda_semana}.
         </Text>
 
         {/* --- SEÇÃO 2: DICA --- */}
@@ -136,9 +232,9 @@ const BIScreen: React.FC = () => {
            <View style={{ height: 100 }}>
              <FlatList
                ref={flatListRef}
-               data={DICAS_DATA}
+               data={dashboardData.frases_dra_clara}
                renderItem={renderCarouselItem}
-               keyExtractor={(item) => item.id}
+               keyExtractor={(item, index) => index.toString()}
                horizontal
                pagingEnabled
                showsHorizontalScrollIndicator={false}
@@ -148,7 +244,7 @@ const BIScreen: React.FC = () => {
              />
            </View>
            <View style={styles.dotsContainer}>
-              {DICAS_DATA.map((_, index) => (
+              {dashboardData.frases_dra_clara.map((_, index) => (
                 <View key={index} style={[styles.dot, activeTipIndex === index && styles.dotActive]} />
               ))}
            </View>
@@ -161,18 +257,14 @@ const BIScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>Alertas Inteligentes</Text>
           </View>
 
-          <View style={styles.alertItem}>
-              <View style={styles.alertIconContainer}>
-                  <MaterialCommunityIcons name="alert" size={24} color={cor_terciaria} />
-              </View>
-              <Text style={styles.alertText}>Suas vendas caíram 20% essa semana. Quer dicas para melhorar?</Text>
-          </View>
-          <View style={styles.alertItem}>
-              <View style={styles.alertIconContainer}>
-                  <MaterialCommunityIcons name="star" size={24} color={cor_primaria} />
-              </View>
-              <Text style={styles.alertText}>Nova Oportunidade: pessoas próximas a você estão pesquisando por doces veganos!</Text>
-          </View>
+          {dashboardData.alertas_inteligentes.map((alert, index) => (
+            <View key={index} style={styles.alertItem}>
+                <View style={styles.alertIconContainer}>
+                    <MaterialCommunityIcons name="alert" size={24} color={cor_terciaria} />
+                </View>
+                <Text style={styles.alertText}>{alert}</Text>
+            </View>
+          ))}
         </CardBase>
 
         {/* --- SEÇÃO 4: CAMPANHA --- */}
@@ -196,21 +288,32 @@ const BIScreen: React.FC = () => {
               <Text style={styles.sectionTitle}>Vendas por Dia</Text>
            </View>
            <View style={styles.chartArea}>
-              {[150, 200, 175, 225, 250].map((valor, index) => {
-                 const days = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
-                 const height = (valor / 250) * 100;
-                 const isMax = valor === 250;
+              {Object.entries(dashboardData.vendas_por_dia_semana).map(([day, valor], index) => {
+                 const daysMap: { [key: string]: string } = {
+                   segunda: 'Seg',
+                   terca: 'Ter',
+                   quarta: 'Qua',
+                   quinta: 'Qui',
+                   sexta: 'Sex',
+                 };
+                 const displayDay = daysMap[day] || day;
+                 const maxSales = Math.max(...Object.values(dashboardData.vendas_por_dia_semana));
+                 const height = maxSales > 0 ? (valor / maxSales) * 100 : 0;
+                 const dailyGoal = dashboardData.meta_semanal / 5; // Assuming 5 working days
+                 const didMeetDailyGoal = valor >= dashboardData.meta_diaria;
+
                  return (
                     <View key={index} style={styles.barContainer}>
-                       <View style={[styles.bar, { height: `${height}%`, backgroundColor: isMax ? cor_primaria : cor_terciaria }]}>
-                          <Text style={styles.barValueText}>R${valor}</Text>
+                       <View style={[styles.bar, { height: `${height}%`, backgroundColor: didMeetDailyGoal ? cor_primaria : cor_terciaria }]}>
+                          {valor > 0 && <Text style={styles.barValueText}>R${valor}</Text>}
                        </View>
-                       <Text style={styles.barLabel}>{days[index]}</Text>
+                       <Text style={styles.barLabel}>{displayDay}</Text>
                     </View>
                  );
               })}
            </View>
         </CardBase>
+
 
         {/* --- SEÇÃO 6: FORMALIZE SEU NEGÓCIO (NOVO) --- */}
         <CardBase style={styles.campaignCard}>
@@ -219,11 +322,11 @@ const BIScreen: React.FC = () => {
             <Text style={styles.campaignTitle}>Formalize Seu Negócio</Text>
             
             <Text style={styles.campaignDescription}>
-               A Dra. Clara te ajuda a dar o próximo passo para o sucesso e segurança da sua Doceria.
+               A D. Maria te ajuda a dar o próximo passo para o sucesso e segurança da sua Doceria.
             </Text>
 
             <Buttongeneric 
-                title="Falar com Dra. Clara"
+                title="Falar com D. Maria"
                 onPress={() => console.log('Falar com Dra. Clara')}
                 variant="primary"
                 style={{ backgroundColor: cor_terciaria, width: '90%', marginTop: 8 }} // Botão laranja
@@ -243,23 +346,21 @@ const BIScreen: React.FC = () => {
 
            {/* Linha de Ícones */}
            <View style={styles.achievementsRow}>
-              {/* Conquista 1 */}
-              <View style={styles.achievementItem}>
-                 <MaterialCommunityIcons name="ribbon" size={48} color={cor_primaria} style={{ marginBottom: 8 }} />
-                 <Text style={styles.achievementText}>100 Vendas!</Text>
-              </View>
+              {achievements.map((achievement) => {
+                const totalVendaSemanaNum = parseFloat(dashboardData.total_venda_semana.replace(',', '.'));
+                const weeklyGoalMet = metaPorcentagem >= 100;
+                const isUnlocked = achievement.condition(dashboardData, totalVendaSemanaNum, weeklyGoalMet);
+                const iconColor = isUnlocked ? achievement.unlockedColor : achievement.lockedColor;
 
-              {/* Conquista 2 */}
-              <View style={styles.achievementItem}>
-                 <MaterialCommunityIcons name="trophy" size={48} color={cor_terciaria} style={{ marginBottom: 8 }} />
-                 <Text style={styles.achievementText}>Meta Semanal!</Text>
-              </View>
-
-              {/* Conquista 3 */}
-              <View style={styles.achievementItem}>
-                 <MaterialCommunityIcons name="diamond-stone" size={48} color={cor_secundaria} style={{ marginBottom: 8 }} />
-                 <Text style={styles.achievementText}>Cliente Fiel!</Text>
-              </View>
+                return (
+                  <View key={achievement.key} style={styles.achievementItem}>
+                    <MaterialCommunityIcons name={achievement.iconName} size={48} color={iconColor} style={{ marginBottom: 8 }} />
+                    <Text style={[styles.achievementText, { color: iconColor }]}>
+                      {achievement.title}
+                    </Text>
+                  </View>
+                );
+              })}
            </View>
         </CardBase>
 
@@ -322,7 +423,7 @@ const styles = StyleSheet.create({
   chartCard: { backgroundColor: '#FFFFFF', padding: 16, marginBottom: 20, width: '100%' },
   chartArea: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'flex-end', height: 150, paddingTop: 20 },
   barContainer: { alignItems: 'center', width: 50, height: '100%', justifyContent: 'flex-end' },
-  bar: { width: 40, borderRadius: 6, marginBottom: 8, justifyContent: 'flex-end', alignItems: 'center' },
+  bar: { width: 60, borderRadius: 6, marginBottom: 8, justifyContent: 'flex-end', alignItems: 'center' },
   barValueText: { color: '#FFF', fontSize: FONT_SIZE.XS, fontFamily: FONT_FAMILY.JOST_BOLD, marginBottom: 4 },
   barLabel: { ...typography.p, fontSize: FONT_SIZE.XS, color: cinza },
 
@@ -358,7 +459,32 @@ const styles = StyleSheet.create({
     color: cinza,
     textAlign: 'center',
     marginTop: 4,
-  }
+  },
+  // Loading and Error Styles
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: cor_backgroud,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: FONT_SIZE.MD,
+    color: cor_secundaria,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: cor_backgroud,
+    padding: 20,
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: FONT_SIZE.MD,
+    color: 'red',
+    textAlign: 'center',
+  },
 });
 
 export default BIScreen;

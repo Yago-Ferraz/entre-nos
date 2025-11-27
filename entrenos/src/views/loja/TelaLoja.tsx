@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,73 +9,39 @@ import {
   TouchableOpacity,
   Dimensions,
   StatusBar,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import Header from '../../components/header/header';
-import { cor_primaria, cor_secundaria, typography } from '../../global';
+import { cor_primaria, cor_secundaria, typography, cor_terciaria, cor_backgroud, cor_vermelho, cinza, FONT_SIZE, FONT_FAMILY } from '../../global';
 import CardBase from '../../components/cards/cardbase';
 import Buttongeneric from '../../components/buttons/buttongeneric';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { LojaStackParamList } from '../../types/navigationTypes';
+import { getLojaDetails } from '../../services/lojaService';
+import { LojaDetails, LojaProduto } from '../../types/loja';
+import { useAuth } from '../../AuthContext';
+import AlertMessage from '../../components/alertas/AlertMessage';
 
 const { width, height } = Dimensions.get("window");
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-}
-
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: 'Macarons Coloridos',
-    description: 'Variedade de sabores e cores vibrantes.',
-    price: 'R$ 8,00',
-    image: 'https://images.unsplash.com/photo-1569864358642-9d1684040f43?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
-  },
-  {
-    id: 2,
-    name: 'Cookies de Chocolate',
-    description: 'Crocantes por fora, macios por dentro.',
-    price: 'R$ 6,50',
-    image: 'https://images.unsplash.com/photo-1499636138143-bd649043ea80?ixlib.rb-1.2.1&auto=format&fit=crop&w=500&q=60'
-  },
-  {
-    id: 3,
-    name: 'Bolo de Cenoura',
-    description: 'Clássico bolo de cenoura com cobertura.',
-    price: 'R$ 60,00',
-    image: 'https://images.unsplash.com/photo-1595103445371-a8ef96d66e51?ixlib.rb-1.2.1&auto=format&fit=crop&w=500&q=60'
-  },
-  {
-    id: 4,
-    name: 'Brigadeiro Gourmet',
-    description: 'O tradicional doce em versão gourmet.',
-    price: 'R$ 4,00',
-    image: 'https://images.unsplash.com/photo-1579372786545-d24232daf58c?ixlib.rb-1.2.1&auto=format&fit=crop&w=500&q=60'
-  },
-];
-
 type ProductItemProps = {
-  item: Product;
+  item: LojaProduto;
   navigation: any;
+  onShowAlert: (alert: { message: string, type: 'success' | 'error' }) => void;
 };
 
-const ProductItem = ({ item, navigation }: ProductItemProps) => (
+const ProductItem = ({ item, navigation, onShowAlert }: ProductItemProps) => (
   <CardBase style={localStyles.productCard} width="48%" onPress={() => navigation.navigate('TelaProduto', { productId: item.id })}>
-    <Image source={{ uri: item.image }} style={localStyles.productImage} />
+    <Image source={{ uri: item.imagem }} style={localStyles.productImage} />
     <View style={localStyles.productContent}>
-      <Text style={localStyles.productName} numberOfLines={2}>{item.name}</Text>
-      <Text style={localStyles.productDesc} numberOfLines={2}>{item.description}</Text>
-      <Text style={localStyles.productPrice}>{item.price}</Text>
+      <Text style={localStyles.productName} numberOfLines={2}>{item.nome}</Text>
+      <Text style={localStyles.productDesc} numberOfLines={2}>{item.descricao}</Text>
+      <Text style={localStyles.productPrice}>R$ {item.preco}</Text>
       
       <Buttongeneric 
         title="Adicionar ao Carrinho" 
-        onPress={() => console.log('Add', item.name)}
+        onPress={() => onShowAlert({ message: "Você não pode comprar seus próprios itens.", type: 'error' })}
         style={localStyles.addButton}
         textStyle={{ fontSize: 10 }}
       />
@@ -86,65 +52,131 @@ const ProductItem = ({ item, navigation }: ProductItemProps) => (
 type LojaScreenProps = NativeStackScreenProps<LojaStackParamList, 'TelaLoja'>;
 
 export default function LojaScreen({ navigation }: LojaScreenProps) {
+  const { user } = useAuth();
+  const lojaId = user?.empresa?.id;
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState(PRODUCTS);
+  const [lojaDetails, setLojaDetails] = useState<LojaDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filteredProducts, setFilteredProducts] = useState<LojaProduto[]>([]);
+  const [alert, setAlert] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
-  React.useEffect(() => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = PRODUCTS.filter((product: Product) =>
-      product.name.toLowerCase().includes(lowercasedQuery)
+  useEffect(() => {
+    const fetchLojaDetails = async () => {
+      if (!lojaId) {
+        setError('Você não possui uma loja cadastrada.');
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoading(true);
+        const data = await getLojaDetails(lojaId);
+        
+        setLojaDetails(data);
+        if (data.produtos) {
+          setFilteredProducts(data.produtos);
+        }
+        setError(null);
+      } catch (e) {
+        setError('Não foi possível carregar os detalhes da loja.');
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLojaDetails();
+  }, [lojaId]);
+
+  useEffect(() => {
+    if (lojaDetails && lojaDetails.produtos) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      const filtered = lojaDetails.produtos.filter((product: LojaProduto) =>
+        product.nome.toLowerCase().includes(lowercasedQuery)
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchQuery, lojaDetails]);
+
+  if (loading) {
+    return (
+      <View style={[localStyles.container, localStyles.center]}>
+        <ActivityIndicator size="large" color={cor_primaria} />
+        <Text>Carregando sua loja...</Text>
+      </View>
     );
-    setFilteredProducts(filtered);
-  }, [searchQuery]);
+  }
+
+  if (error && !lojaDetails) {
+    return (
+      <View style={[localStyles.container, localStyles.center]}>
+        <Text style={localStyles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!lojaDetails) {
+    return (
+        <View style={[localStyles.container, localStyles.center]}>
+            <Text>Nenhum detalhe da loja encontrado.</Text>
+        </View>
+    );
+  }
+  
+  const mainImage = lojaDetails.fotos && lojaDetails.fotos.length > 0 ? lojaDetails.fotos[0].imagem : 'https://images.unsplash.com/photo-1559553156-2e97137af16f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80';
+
 
   return (
     <View style={localStyles.container}>
+      {alert && (
+        <AlertMessage
+          message={alert.message}
+          type={alert.type}
+          onHide={() => setAlert(null)}
+        />
+      )}
       <StatusBar barStyle="light-content" backgroundColor={cor_primaria} />
       
       <Header 
-        title="Loja" 
-        showBackButton={true} 
-        onBackPress={() => console.log('Voltar')}
+        title={'Loja'}
+        showBackButton={false} 
+        onBackPress={() => navigation.goBack()}
       />
 
       <ScrollView contentContainerStyle={localStyles.scrollContent}> 
         
         <View style={localStyles.bannerContainer}>
           <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1559553156-2e97137af16f?ixlib.rb-1.2.1&auto=format&fit=crop&w=800&q=80' }} 
+            source={{ uri: mainImage }} 
             style={localStyles.bannerImage} 
           />
           <View style={localStyles.avatarContainer}>
              <View style={localStyles.avatarCircle}>
-                <Text style={localStyles.avatarText}>doceria{'\n'}da ana</Text>
+                <Image source={{ uri: lojaDetails.logo }} style={localStyles.avatarImage} />
              </View>
           </View>
         </View>
 
         <CardBase style={localStyles.storeInfoCard} width="90%">
-          <Text style={localStyles.storeName}>Doceria da Ana</Text>
+          <Text style={localStyles.storeName}>{lojaDetails.user.name}</Text>
           <Text style={localStyles.storeSubtitle}>
-            Doces caseiros feitos com amor e carinho para adoçar o seu dia!
+            {lojaDetails.descricao}
           </Text>
           
           <View style={localStyles.ratingContainer}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <FontAwesome key={star} name="star" size={16} color={cor_secundaria} style={{marginHorizontal: 2}} />
+            {[...Array(5)].map((_, index) => (
+              <FontAwesome key={index} name={index < lojaDetails.avaliacao ? "star" : "star-o"} size={16} color={cor_terciaria} style={{marginHorizontal: 2}} />
             ))}
-            <Text style={localStyles.ratingText}>(4.8 - 250 avaliações)</Text>
+            <Text style={localStyles.ratingText}>({typeof lojaDetails.avaliacao === 'number' ? lojaDetails.avaliacao.toFixed(1) : '0.0'})</Text>
           </View>
 
           <View style={localStyles.infoRow}>
-            <Ionicons name="location-sharp" size={18} color={cor_primaria} style={localStyles.infoIcon} />
-            <Text style={localStyles.infoText}>Rua das Delícias, 123 - Centro, Cidade</Text>
-          </View>
-          <View style={localStyles.infoRow}>
-            <Ionicons name="time" size={18} color={cor_primaria} style={localStyles.infoIcon} />
-            <Text style={localStyles.infoText}>Aberto: Seg-Sáb, 9h-18h</Text>
+            <Ionicons name="mail" size={18} color={cor_primaria} style={localStyles.infoIcon} />
+            <Text style={localStyles.infoText}>{lojaDetails.user.email}</Text>
           </View>
           <View style={localStyles.infoRow}>
             <Ionicons name="call" size={18} color={cor_primaria} style={localStyles.infoIcon} />
-            <Text style={localStyles.infoText}>(00) XXXX-XXXX</Text>
+            <Text style={localStyles.infoText}>{lojaDetails.user.phone}</Text>
           </View>
         </CardBase>
 
@@ -164,8 +196,8 @@ export default function LojaScreen({ navigation }: LojaScreenProps) {
         </View>
 
         <View style={localStyles.gridContainer}>
-          {filteredProducts.map((item: Product) => (
-            <ProductItem key={item.id} item={item} navigation={navigation} />
+          {filteredProducts.map((item: LojaProduto) => (
+            <ProductItem key={item.id} item={item} navigation={navigation} onShowAlert={setAlert} />
           ))}
         </View>
       </ScrollView>
@@ -174,9 +206,17 @@ export default function LojaScreen({ navigation }: LojaScreenProps) {
 }
 
 const localStyles = StyleSheet.create({
-    container: {
+  container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: cor_backgroud,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: cor_vermelho,
+    fontSize: FONT_SIZE.MD,
   },
   scrollContent: {
     paddingBottom: 80,
@@ -207,12 +247,11 @@ const localStyles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#fff',
     elevation: 5,
+    overflow: 'hidden',
   },
-  avatarText: {
-    color: '#D32F2F',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 12,
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   storeInfoCard: {
     marginTop: -10,
@@ -222,14 +261,14 @@ const localStyles = StyleSheet.create({
     marginBottom: 20,
   },
   storeName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#00296B',
+    ...typography.h2,
+    fontSize: FONT_SIZE.LG,
+    color: cor_secundaria,
     marginTop: 10,
   },
   storeSubtitle: {
-    fontSize: 12,
-    color: '#888',
+    ...typography.p,
+    color: cinza,
     textAlign: 'center',
     marginVertical: 8,
   },
@@ -239,8 +278,8 @@ const localStyles = StyleSheet.create({
     marginBottom: 12,
   },
   ratingText: {
-    fontSize: 12,
-    color: '#666',
+    ...typography.p,
+    color: cinza,
     marginLeft: 5,
   },
   infoRow: {
@@ -255,17 +294,17 @@ const localStyles = StyleSheet.create({
     marginRight: 5,
   },
   infoText: {
-    fontSize: 12,
-    color: '#666',
+    ...typography.p,
+    color: cinza,
   },
   sectionContainer: {
     paddingHorizontal: 20,
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#00296B',
+    ...typography.h2,
+    fontSize: FONT_SIZE.LG,
+    color: cor_secundaria,
     marginBottom: 10,
   },
   searchContainer: {
@@ -307,20 +346,20 @@ const localStyles = StyleSheet.create({
     padding: 10,
   },
   productName: {
+    fontFamily: FONT_FAMILY.JOST_BOLD,
     fontSize: 13,
-    fontWeight: 'bold',
     color: '#000',
     marginBottom: 4,
   },
   productDesc: {
     fontSize: 10,
-    color: '#777',
+    color: cinza,
     marginBottom: 6,
     height: 28,
   },
   productPrice: {
+    fontFamily: FONT_FAMILY.JOST_BOLD,
     fontSize: 14,
-    fontWeight: 'bold',
     color: cor_primaria,
     marginBottom: 8,
   },

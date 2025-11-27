@@ -28,7 +28,7 @@ export default function AlertMessage({ message, type = "success", onHide }: Prop
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 20,
+    bottom: 20,
     left: 20,
     right: 20,
     padding: 12,

@@ -2,13 +2,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../../views/home/HomeScreen";
 import ProdutoScreem from "../../views/home/produtos/viewproduto";
 import Createproduto from "../../views/home/produtos/createproduto";
-import {AuthStackParamList} from "../../Routes";
+import { HomeStackParamList } from "../../types/navigationTypes"; // Corrected import path
 import FluxoCaixaScreen from "../../views/home/moeda/caixa";
 import MeusPedidos from "../../views/home/pedidos/pedidos";
 import ExtratoScreen from "../../views/home/moeda/ExtratoScreen";
 import BIScreen from "../../views/home/BI";
 
-const Stack = createNativeStackNavigator<AuthStackParamList>();
+const Stack = createNativeStackNavigator<HomeStackParamList>();
 
 export default function HomeStack() {
   return (
