@@ -3,7 +3,7 @@ import axios from 'axios';
 import { onLogoutCallback } from "../AuthContext"; // Import the logout callback
 
 
-export const baseurl= 'http://192.168.100.6:8003'
+export const baseurl= 'http://192.168.1.64:8003'
 
 // 1. API pública (ex: criar usuário, login)
 export const API_PUBLIC = axios.create({

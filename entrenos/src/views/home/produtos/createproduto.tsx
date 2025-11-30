@@ -212,6 +212,7 @@ const handledelete = async (id: number) => {
           placeholder="Nome do produto"
           value={form.nome}
           onChangeText={(text) => handleChange("nome", text)}
+          testID="name-input"
         />
 
         <CustomInput
@@ -219,6 +220,7 @@ const handledelete = async (id: number) => {
           placeholder="Descrição"
           value={form.descricao}
           onChangeText={(text) => handleChange("descricao", text)}
+          testID="description-input"
         />
 
         
@@ -227,6 +229,7 @@ const handledelete = async (id: number) => {
         <Stepper
           value={form.quantidade}
           onChange={(value) => handleChange("quantidade", value)}
+          testID="quantity-stepper"
         />
         </View>
 
@@ -236,6 +239,7 @@ const handledelete = async (id: number) => {
           value={String(form.preco)}
           keyboardType="default"
           onChangeText={(text) => handleChange("preco", text)}
+          testID="price-input"
         />
 
         
@@ -259,6 +263,7 @@ const handledelete = async (id: number) => {
           <Buttongeneric
           title="Salvar Produto"
           onPress={handleSubmit}
+          testID="save-product-button"
         />)
         
         }
