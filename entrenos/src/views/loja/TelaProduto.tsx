@@ -99,7 +99,7 @@ export default function ProductDetailScreen({ navigation }: ProductDetailScreenP
       )}
       <View style={styles.headerWrapper}>
          <Header title="Loja" showBackButton={true} onBackPress={handleGoBack} />
-         <TouchableOpacity style={styles.cartIconHeader} onPress={handleAddToCart}>
+         <TouchableOpacity style={styles.cartIconHeader} onPress={handleAddToCart} accessibilityLabel="Cart icon">
             <Ionicons name="cart-outline" size={24} color="#FFF" />
          </TouchableOpacity>
       </View>
@@ -146,7 +146,7 @@ export default function ProductDetailScreen({ navigation }: ProductDetailScreenP
       </ScrollView>
 
       <View style={styles.actionFooter}>
-        <NextBackStepper value={quantity} scale={0.8} onChange={handleQuantityChange} />
+        <NextBackStepper value={quantity} scale={0.8} onChange={handleQuantityChange} testID="NextBackStepper" />
         <Buttongeneric
           title="Adicionar"
           onPress={handleAddToCart}
