@@ -24,8 +24,9 @@ export const styles = StyleSheet.create({
     marginRight: 15,
   },
   secondaryLogo: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
+    borderRadius: 30, // Adiciona bordas arredondadas para um visual circular
     resizeMode: 'contain',
   },
   userInfo: {

@@ -1,5 +1,6 @@
 // src/views/Support/styles.ts
 import { StyleSheet } from 'react-native';
+import { cor_primaria } from '@/src/global';
 
 export const styles = StyleSheet.create({
   fullContainer: {
@@ -14,7 +15,7 @@ export const styles = StyleSheet.create({
     paddingTop: 45, // Ajuste para descer abaixo da status bar (pode usar useSafeAreaInsets)
     paddingBottom: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#003366', // Cor de fundo escura
+    backgroundColor: cor_primaria, // Cor de fundo escura
   },
   backButton: {
     marginRight: 15,
@@ -38,7 +39,6 @@ export const styles = StyleSheet.create({
   // Placeholder para a barra de navegação inferior
   bottomNavPlaceholder: {
     height: 60, // Altura da sua barra de navegação
-    backgroundColor: '#003366', 
     position: 'absolute',
     bottom: 0,
     left: 0,

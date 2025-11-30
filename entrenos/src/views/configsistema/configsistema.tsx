@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { styles } from './configsistemastyle'; // Importa os estilos
-
+import Header from '../../components/header/header';
+import { useNavigation } from '@react-navigation/native';
+import {baseurl} from '../../services/api';
 // Importações do Header: Reutilizando o header da ProfileScreen
 // IMPORTANTE: Se você decidir mover o Header para um componente reutilizável, 
 // o código abaixo seria simplificado. Por enquanto, mantemos o visual do header aqui.
@@ -9,6 +11,7 @@ import { useAuth } from '../../AuthContext';
 
 export const AboutScreen = () => {
   const { user } = useAuth(); // Usado apenas para obter os dados do header
+  const navigation = useNavigation();
 
   const handleUpdateApp = () => {
     // Lógica para abrir a loja de aplicativos (Google Play/App Store)
@@ -19,9 +22,11 @@ export const AboutScreen = () => {
   // Se o usuário ainda não tiver sido carregado (embora improvável, pois esta é uma tela secundária)
   const userName = user?.name || 'Usuário';
   const userEmail = user?.email || 'N/A';
+  const imageUri =`${baseurl}${user?.empresa?.logo}` || 'URL_DA_IMAGEM_DO_LOGO_PRINCIPAL';
 
   return (
     <View style={styles.fullContainer}>
+      <Header title="Sobre o Sistema" showBackButton={true} onBackPress={() => navigation.goBack()} />
       <ScrollView style={styles.container}>
         {/* 1. SEÇÃO DO HEADER (Mantém o mesmo layout da ProfileScreen) */}
         <View style={styles.header}>
@@ -36,7 +41,7 @@ export const AboutScreen = () => {
             </View>
           </View>
           <Image
-            source={{ uri: 'URL_DA_IMAGEM_DO_LOGO_SECUNDARIO' }}
+            source={{ uri: imageUri }}
             style={styles.secondaryLogo}
           />
         </View>

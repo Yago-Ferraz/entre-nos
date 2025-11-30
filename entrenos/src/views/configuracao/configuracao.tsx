@@ -5,8 +5,8 @@ import { AccountsModal } from '../../components/trocaperfil/trocaperfil'; // ⬅
 import { styles } from './configuracaostyles'; // Importa os estilos separados
 // ⬇️ ATENÇÃO: Verifique e ajuste o caminho se AuthContext.tsx estiver em outro lugar!
 import { useAuth } from '../../AuthContext'; 
-
-export const ProfileScreen = () => {
+import {baseurl} from '../../services/api';
+export const ProfileScreen = ({ navigation }: any) => {
   
   // ⬇️ Estado para controlar a visibilidade do modal de contas
   const [isModalVisible, setIsModalVisible] = useState(false); 
@@ -28,28 +28,22 @@ export const ProfileScreen = () => {
     setIsModalVisible(false); // Fecha o modal após a ação
     if (action === 'SairDaConta') {
       logout();
-    } else {
-      console.log(`Ação/Navegação: ${action}`);
-      // navigation.navigate(action)
+      return;
     }
+    navigation.navigate(action);
   };
 
 
   const handlePress = (item: string) => {
-    
-    // ⬇️ AÇÃO PARA ABRIR O MODAL
     if (item === 'TrocarPerfil') {
       setIsModalVisible(true);
       return;
     }
-    
-    console.log(`Navegando ou Ação: ${item}`);
-    
-    // Se for 'Sair/Logout', chame a função de logout
-    if (item === 'Sair') {
-      logout();
-    }
-    // Aqui você adicionaria sua lógica de navegação (ex: navigation.navigate(item))
+    if (item === 'Sair') {
+      logout();
+      return;
+    }
+    navigation.navigate(item);
   };
 
   // ⚠️ TRATAMENTO DE CARREGAMENTO/AUSÊNCIA DO USUÁRIO
@@ -83,7 +77,7 @@ export const ProfileScreen = () => {
         </View>
         <Image
           // Substitua pela URL da imagem do logo secundário (círculo colorido)
-          source={{ uri: 'URL_DA_IMAGEM_DO_LOGO_SECUNDARIO' }}
+          source={{ uri:`${baseurl}${user.empresa?.logo}` || 'URL_DA_IMAGEM_DO_LOGO_SECUNDARIO' }}
           style={styles.secondaryLogo}
         />
       </View>

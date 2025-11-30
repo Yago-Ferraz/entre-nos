@@ -29,8 +29,9 @@ export const styles = StyleSheet.create({
     marginRight: 15,
   },
   secondaryLogo: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
+    borderRadius: 30, // Adiciona bordas arredondadas para um visual circular
     resizeMode: 'contain',
   },
   userInfo: {
@@ -124,7 +125,6 @@ export const styles = StyleSheet.create({
   // Placeholder para a barra de navegação inferior (apenas para manter o layout)
   bottomNavPlaceholder: {
     height: 60, // Altura da sua barra de navegação
-    backgroundColor: '#003366', // Cor escura como na imagem
     position: 'absolute',
     bottom: 0,
     left: 0,
