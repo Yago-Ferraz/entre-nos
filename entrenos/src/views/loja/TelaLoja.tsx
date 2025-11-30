@@ -33,7 +33,7 @@ type ProductItemProps = {
 
 const ProductItem = ({ item, navigation, onShowAlert }: ProductItemProps) => (
   <CardBase style={localStyles.productCard} width="48%" onPress={() => navigation.navigate('TelaProduto', { productId: item.id })}>
-    <Image source={{ uri: item.imagem }} style={localStyles.productImage} />
+    <Image source={{ uri: item.imagem }} style={localStyles.productImage} testID={`product-image-${item.id}`} />
     <View style={localStyles.productContent}>
       <Text style={localStyles.productName} numberOfLines={2}>{item.nome}</Text>
       <Text style={localStyles.productDesc} numberOfLines={2}>{item.descricao}</Text>
@@ -44,6 +44,7 @@ const ProductItem = ({ item, navigation, onShowAlert }: ProductItemProps) => (
         onPress={() => onShowAlert({ message: "Você não pode comprar seus próprios itens.", type: 'error' })}
         style={localStyles.addButton}
         textStyle={{ fontSize: 10 }}
+        testID={`add-to-cart-button-${item.id}`}
       />
     </View>
   </CardBase>
@@ -152,7 +153,7 @@ export default function LojaScreen({ navigation }: LojaScreenProps) {
           />
           <View style={localStyles.avatarContainer}>
              <View style={localStyles.avatarCircle}>
-                <Image source={{ uri: lojaDetails.logo }} style={localStyles.avatarImage} />
+                <Image source={{ uri: lojaDetails.logo }} style={localStyles.avatarImage} testID="logo-image" />
              </View>
           </View>
         </View>
