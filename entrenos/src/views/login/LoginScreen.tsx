@@ -7,6 +7,7 @@ import { ROUTES } from '../../Routes';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { AuthStackParamList } from "../../types/navigationTypes";
 import { useAuth } from "../../AuthContext";
+import axios, { AxiosError } from 'axios';
 
 const loginImage = require("../../../assets/images/logoEntreNos.png");
 
@@ -19,10 +20,21 @@ const LoginScreen = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  const isValidEmail = (email: string) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+  };
+
+
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
       Alert.alert("Erro", "Preencha e-mail e senha.");
       return;
+    }
+
+    if (!isValidEmail(formData.email)) {
+    Alert.alert("Erro", "E-mail inválido.");
+    return;
     }
 
     setLoading(true);
@@ -32,9 +44,23 @@ const LoginScreen = () => {
       // O RootNavigator vai automaticamente trocar para AppStack
     } catch (err) {
       console.error("Erro ao logar:", err);
-      Alert.alert("Erro", "E-mail ou senha incorretos.");
+
+        if (axios.isAxiosError(err)) {
+            const statusCode = err.response ? err.response.status : null;
+
+            if (statusCode === 429) {
+                Alert.alert(
+                    "Limite de Tentativas Excedido", 
+                    "Você excedeu o número máximo de tentativas de login. Tente novamente mais tarde."
+                );
+            } 
+    
+            else if (statusCode === 401 || statusCode === 400) {
+                Alert.alert("Erro", "E-mail ou senha incorretos.");
+            }
+        }
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 

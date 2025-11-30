@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Image, Text, TouchableOpacity, View,StyleSheet,KeyboardAvoidingView,Platform } from "react-native";
+import { Image, Text, TouchableOpacity, View,StyleSheet,KeyboardAvoidingView,Platform,Alert } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 import StepCard from "../../components/cards/stepCard";
 import Header from "../../components/header/header";
@@ -13,6 +13,7 @@ import { AuthStackParamList } from '../../types/navigationTypes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { createUser, loginUser } from '../../services/userService';
 import { useAuth } from '../..//AuthContext';
+import axios from 'axios';
 
 
 type CadastroNavigationProp = NativeStackNavigationProp<
@@ -101,27 +102,67 @@ const Cadastro = () => {
   const { login } = useAuth()
   const [loading, setLoading] = useState(false);
 
+  const isValidEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+};
+
 const handleNext = async () => {
+  const currentStepId = steps[currentStep].id;
+
+          if (currentStepId === 2 && !formData.name.trim()) {
+              Alert.alert("Erro", "O campo Nome é obrigatório.");
+              return; // Impede o avanço
+          }
+        
+          if (currentStepId === 5) {
+
+              if (formData.password.length < 6) {
+                  Alert.alert("Erro", "A senha deve ter no mínimo 6 caracteres.");
+                  return; 
+              }
+          }
+          
+          if (currentStepId === 6) {
+              if (!formData.email.trim()) {
+                  Alert.alert("Erro", "O campo E-mail é obrigatório.");
+                  return;
+              }
+              
+              if (!isValidEmail(formData.email)) {
+                  Alert.alert("Erro", "O endereço de e-mail inserido é inválido.");
+                  return;
+              }
+          }
+
   if (currentStep < steps.length - 1) {
     setCurrentStep(currentStep + 1);
   } else {
+    const standardizedEmail = formData.email.toLowerCase();
     console.log("Finalizar cadastro:", formData);
     setLoading(true);
     try {
-      // Cria o usuário
-      await createUser(formData);
-      console.log("Usuário criado com sucesso!");
+        await createUser({...formData, email: standardizedEmail });
+        console.log("Usuário criado com sucesso!");
+        await login(standardizedEmail, formData.password);
 
-      // Faz login automático passando email e password
-      await login(formData.email, formData.password);
-
-      // Navega para a tela seguinte
-      navigation.navigate('singuploja', { formData });
+        navigation.navigate('singuploja', { formData:{ ...formData, email: standardizedEmail } });
     } catch (error) {
-      console.error("Erro ao criar usuário ou logar:", error);
-      alert("Não foi possível criar o usuário ou logar. Verifique os dados e tente novamente.");
+        if (axios.isAxiosError(error)) {
+            const statusCode = error.response ? error.response.status : null;        
+            if (statusCode === 409) {
+                Alert.alert(
+                    "Cadastro Existente", 
+                    "Este e-mail já está sendo usado. Tente fazer login ou use outro e-mail."
+                );
+                return; 
+            }
+        }
+                
+        console.error("Erro ao criar usuário ou logar:", error);
+        Alert.alert("Erro", "Não foi possível criar o usuário ou logar. Verifique os dados e tente novamente.");
     }finally {
-      setLoading(false); // Desativa o estado de carregamento
+      setLoading(false);
     }
   }
 };
