@@ -22,6 +22,7 @@ interface CustomButtonProps {
   textStyle?: StyleProp<TextStyle>;
   width?: number | `${number}%`; 
   invertido?: boolean;
+  testID?: string;
 }
 
 const Buttongeneric: React.FC<CustomButtonProps> = ({
@@ -35,6 +36,7 @@ const Buttongeneric: React.FC<CustomButtonProps> = ({
   textStyle,
   width,
   invertido = false,
+  testID,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
 
@@ -61,6 +63,7 @@ const Buttongeneric: React.FC<CustomButtonProps> = ({
 
   return (
     <TouchableOpacity
+      testID={testID}
       style={getButtonStyles()}
       onPress={onPress}
       disabled={disabled || loading}

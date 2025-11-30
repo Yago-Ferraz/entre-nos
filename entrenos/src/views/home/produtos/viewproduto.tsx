@@ -87,6 +87,7 @@ const ProdutoScreem = () => {
         <View style={styles.searchContainer}>
             <Icon name="search" size={18} color="#002147" style={styles.searchIcon} />
             <TextInput 
+                testID="search-input"
                 style={styles.searchInput}
                 placeholder="pesquisar"
                 placeholderTextColor="#999"
@@ -115,7 +116,7 @@ const ProdutoScreem = () => {
                         resizeMode="cover"
                     />
                     <View style={styles.productInfo}>
-                        <Text style={styles.productName} numberOfLines={1}>{item.results.nome}</Text>
+                        <Text testID={`product-name-${item.id}`} style={styles.productName} numberOfLines={1}>{item.results.nome}</Text>
                         <Text style={styles.productCode}>ID: {item.id}</Text> 
                         <Text style={styles.productQty}>{item.results.quantidade} qtd</Text>
                     </View>

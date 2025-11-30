@@ -10,6 +10,7 @@ interface CustomInputProps {
   secureTextEntry?: boolean;
   keyboardType?: 'email-address' | 'default';
   width?: number | string; // agora aceita '50%', '80%', etc.
+  testID?: string; // Add testID prop
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -20,6 +21,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   secureTextEntry = false,
   keyboardType = 'default',
   width = '100%',
+  testID, // Destructure testID
 }) => {
   return (
     <View style={[styles.container, width ? { width } : {}] as any}>
@@ -33,6 +35,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         autoCapitalize="none"
+        testID={testID} // Pass testID to TextInput
       />
     </View>
   );
