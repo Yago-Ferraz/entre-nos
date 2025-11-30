@@ -58,6 +58,11 @@ const LoginScreen = () => {
             else if (statusCode === 401 || statusCode === 400) {
                 Alert.alert("Erro", "E-mail ou senha incorretos.");
             }
+            else {
+                Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente mais tarde.");
+            }
+        } else {
+            Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente mais tarde.");
         }
     } finally {
         setLoading(false);
