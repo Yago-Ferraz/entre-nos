@@ -126,15 +126,12 @@ describe("LoginScreen - casos de login ", () => {
     // Clica no botão de login
     fireEvent.press(getByText("Fazer Login"));
 
-    // Aguarda e verifica se a função login foi chamada corretamente
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith("joão@@mail..com", "senha123");
+      // A função de login não deve ser chamada com um e-mail inválido
+      expect(mockLogin).not.toHaveBeenCalled();
 
-      // Verifica se o Alert exibiu a mensagem de erro esperada
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Erro",
-        "Por favor, insira dados válidos para realizar o login."
-      );
+      // Verifica se o Alert exibiu a mensagem de erro esperada para e-mail inválido
+      expect(Alert.alert).toHaveBeenCalledWith("Erro", "E-mail inválido.");
     });
   });
 
