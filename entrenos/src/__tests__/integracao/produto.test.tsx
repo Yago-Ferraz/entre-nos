@@ -498,6 +498,8 @@ describe('CreateProduto Screen', () => {
 
   it('should handle product creation error', async () => {
     const createProdutoSpy = jest.spyOn(require('../../services/produto'), 'createProduto');
+    createProdutoSpy.mockRejectedValueOnce(new Error('Failed to create product'));
+
     render(<CreateProduto />);
     await screen.findByText('Produto'); 
 

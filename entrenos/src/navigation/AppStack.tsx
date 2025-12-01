@@ -45,7 +45,6 @@ export default function AppTabs() {
     >
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Loja" component={LojaStack} />
-      <Tab.Screen name="Mensagens" component={MensagensStacks} />
       <Tab.Screen name="Settings" component={SettingsStack} />
     </Tab.Navigator>
   );
