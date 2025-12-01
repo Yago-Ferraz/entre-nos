@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="assets/images/logoEntreNos.png" alt="Logo Entre Nós" width="200"/>
+  <img src="./entrenos/assets/images/logoEntreNos.png" alt="Logo Entre Nós" width="200"/>
 </div>
 
 # Entre Nós
@@ -45,7 +45,7 @@ Se você é um desenvolvedor e quer fazer parte desta missão, veja como é fác
 ### Instalação e Execução
 1. **Clone o repositório:**
    ```bash
-   git clone <url-do-seu-repositorio>
+   git clone https://github.com/Yago-Ferraz/entre-nos.git
    cd entrenos
    ```
 2. **Instale as dependências:**
