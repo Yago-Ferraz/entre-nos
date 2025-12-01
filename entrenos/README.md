@@ -1,50 +1,71 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<div align="center">
+  <img src="assets/images/logoEntreNos.png" alt="Logo Entre Nós" width="200"/>
+</div>
 
-## Get started
+# Entre Nós
 
-1. Install dependencies
+**Conectando pessoas e negócios locais, fortalecendo a comunidade.**
 
+---
+
+## 🌟 O Que é o Entre Nós?
+
+O **Entre Nós** é mais que um aplicativo: é uma ponte digital para o comércio local. Nossa plataforma foi criada para aproximar consumidores de lojistas da sua região, incentivando a economia local e criando um ecossistema de compras mais humano e personalizado.
+
+Acreditamos no poder da comunidade. Com o Entre Nós, você descobre produtos incríveis perto de você, conversa diretamente com quem vende e ajuda a fortalecer os pequenos negócios que dão vida ao seu bairro.
+
+## ✨ Funcionalidades Pensadas para Você
+
+Criamos uma experiência completa tanto para quem compra quanto para quem vende:
+
+### Para Usuários
+- **Descubra o Comércio Local:** Explore uma variedade de lojas e produtos únicos na sua área.
+- **Converse em Tempo Real:** Fale diretamente com os lojistas para tirar dúvidas e fazer pedidos.
+- **Acessibilidade para Todos:** Incluímos opções para garantir que todos possam usar o aplicativo com conforto e facilidade.
+- **Crie seu Perfil:** Tenha uma experiência personalizada e acesse um mundo de vantagens.
+
+### Para Lojistas
+- **Sua Vitrine Digital:** Cadastre sua loja e exiba seus produtos com fotos e descrições detalhadas.
+- **Conexão Direta com Clientes:** Receba mensagens, gerencie pedidos e construa um relacionamento próximo com seu público.
+- **Gerenciamento Simplificado:** Uma interface intuitiva para você focar no que faz de melhor: vender.
+
+## 🚀 Nossa Missão
+
+Nossa missão é **fortalecer a economia local e criar comunidades mais conectadas**. Queremos ser a ferramenta que impulsiona o pequeno empreendedor e oferece aos consumidores uma alternativa de compra mais consciente e com propósito.
+
+## 🛠️ Como Executar o Projeto (Para Desenvolvedores)
+
+Se você é um desenvolvedor e quer fazer parte desta missão, veja como é fácil começar:
+
+### Pré-requisitos
+- [Node.js](https://nodejs.org/) e [npm](https://www.npmjs.com/)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (recomendado)
+
+### Instalação e Execução
+1. **Clone o repositório:**
+   ```bash
+   git clone <url-do-seu-repositorio>
+   cd entrenos
+   ```
+2. **Instale as dependências:**
    ```bash
    npm install
    ```
-
-2. Start the app
-
+3. **Inicie o projeto:**
    ```bash
-   npx expo start
+   npm start
    ```
+   Após iniciar, o Expo abrirá uma tela no seu navegador com as opções para rodar o app em um emulador, simulador ou no seu próprio celular com o app Expo Go.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+## ✅ Testes
+Para garantir a qualidade do nosso código, usamos Jest. Rode os testes com:
 ```bash
-npm run reset-project
+npm test
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 💖 Quer Contribuir?
 
-## Learn more
+O projeto **Entre Nós** é feito de pessoas para pessoas. Se você é desenvolvedor, designer ou simplesmente alguém apaixonado pela ideia de fortalecer o comércio local, sua contribuição é muito bem-vinda!
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Sinta-se à vontade para abrir uma *issue* com sugestões ou enviar um *pull request* com melhorias. Juntos, podemos fazer a diferença!
