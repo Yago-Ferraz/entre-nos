@@ -1,36 +1,37 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, Image, Pressable } from 'react-native';
 import { AntDesign, Feather } from '@expo/vector-icons';
+import { baseurl } from '../../services/api'; // Import baseurl
 
 // Tipos de dados (ajuste se necessário)
 interface Account {
   id: number;
   name: string;
   email: string;
-  avatarUrl: string;
+  profileImage?: string; // Optional if there's a specific profile image
+  empresa?: {
+    logo?: string;
+  };
 }
 
 interface AccountsModalProps {
   isVisible: boolean;
   onClose: () => void;
   currentAccount: Account;
-  availableAccounts: Account[];
-  onSelectAccount: (account: Account) => void;
   onNavigate: (screen: string) => void;
 }
 
 // Item individual da conta dentro do modal
-const AccountItem: React.FC<{ account: Account, isCurrent: boolean }> = ({ account, isCurrent }) => (
+const AccountItem: React.FC<{ account: Account }> = ({ account }) => (
   <View style={styles.accountItem}>
     <Image 
-      source={{ uri: account.avatarUrl }} 
+      source={{ uri: `${baseurl}${account.empresa?.logo}` || account.profileImage || 'https://via.placeholder.com/40' }} // Fallback image
       style={styles.accountAvatar} 
     />
     <View style={styles.accountTextContainer}>
       <Text style={styles.accountName}>{account.name}</Text>
       <Text style={styles.accountEmail}>{account.email}</Text>
     </View>
-    {isCurrent && <Feather name="check-circle" size={24} color="#2F9E44" />}
   </View>
 );
 
@@ -39,16 +40,8 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
   isVisible, 
   onClose, 
   currentAccount, 
-  availableAccounts, 
-  onSelectAccount, 
   onNavigate 
 }) => {
-  // Contas de exemplo para o visual (você deve usar 'availableAccounts' real)
-  const exampleAccounts: Account[] = [
-    { id: 1, name: 'Ana Souza', email: 'ana.souza@email.com', avatarUrl: 'URL_DOCERIA' },
-    { id: 2, name: 'Ana Amaral', email: 'ana.souzaamaral@email.com', avatarUrl: 'URL_ANA_AMARAL' },
-  ];
-
   return (
     <Modal
       animationType="slide"
@@ -56,36 +49,23 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          {/* Alça do Modal (Handle) */}
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
+        <View style={styles.modalContent} onStartShouldSetResponder={() => true} onTouchEnd={(e) => e.stopPropagation()}>
           <View style={styles.modalHandle} />
 
-          {/* TÍTULO */}
-          <Text style={styles.sectionTitle}>Contas</Text>
+          <Text style={styles.sectionTitle}>Gerenciar Conta</Text>
 
-          {/* LISTA DE CONTAS */}
           <View style={styles.accountsListCard}>
-            {exampleAccounts.map(account => (
-              <TouchableOpacity 
-                key={account.id} 
-                onPress={() => onSelectAccount(account)}
-              >
-                <AccountItem 
-                  account={account} 
-                  isCurrent={account.id === currentAccount.id} // Assumindo que currentAccount é passado
-                />
-              </TouchableOpacity>
-            ))}
+            <AccountItem 
+              account={currentAccount} 
+            />
             
-            {/* BOTÃO ADICIONAR CONTA */}
-            <TouchableOpacity style={styles.addAccountButton} onPress={() => onNavigate('AdicionarConta')}>
+            <TouchableOpacity style={styles.addAccountButton} onPress={() => onNavigate('Login')}>
               <AntDesign name="pluscircle" size={24} color="#2F9E44" />
               <Text style={styles.addAccountText}>adicionar uma conta</Text>
             </TouchableOpacity>
           </View>
 
-          {/* BOTÕES DE AÇÃO */}
           <TouchableOpacity 
             style={[styles.actionButton, styles.createButton]} 
             onPress={() => onNavigate('CriarNovaConta')}
@@ -99,9 +79,8 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
           >
             <Text style={styles.logoutButtonText}>Sair da conta</Text>
           </TouchableOpacity>
-
         </View>
-      </View>
+      </Pressable>
     </Modal>
   );
 };

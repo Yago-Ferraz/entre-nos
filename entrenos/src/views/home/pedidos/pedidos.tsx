@@ -155,12 +155,12 @@ export default function MeusPedidos() {
         onRequestClose={handleCloseModal}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={styles.modalContent} testID="modal-content">
             {selectedPedido && (
               <>
                 <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>Detalhes do Pedido #{selectedPedido.id}</Text>
-                  <TouchableOpacity onPress={handleCloseModal}>
+                  <TouchableOpacity onPress={handleCloseModal} testID="close-modal-button">
                     <Ionicons name="close" size={28} color="#000" />
                   </TouchableOpacity>
                 </View>
